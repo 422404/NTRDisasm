@@ -14,3 +14,7 @@ features and tricks to learn from, such as
 - a plugin system
 - calling privileged ARM11 code using svcBackdoor()
 - running games from other regions by patching their SMDH
+
+There are two idc files, ntr.idc is for public 2.0 and the other for 2.3.
+Please take a look before you load the binaries at 0x100100.
+This project would not include ntr.bin file, go find it yourself.
