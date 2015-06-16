@@ -1165,6 +1165,7 @@ static Bytes_0(void) {
 	MakeCode	(0X101594);
 	MakeComm	(0X1015A4,	"ns");
 	MakeDword	(0X1015BC);
+	MakeComm	(0X1015C0,	"ns");
 	MakeCode	(0X1015C0);
 	MakeDword	(0X1015D4);
 	MakeComm	(0X1015D8,	"thread_priority");
@@ -1212,6 +1213,14 @@ static Bytes_0(void) {
 	MakeCode	(x=0X10168C);
 	OpOff		(x,	1,	0);
 	OpOff		(x,	129,	0);
+	MakeComm	(0X101694,	"processId");
+	MakeComm	(0X101698,	"filename");
+	MakeComm	(0X1016A0,	"processId");
+	MakeComm	(0X1016A4,	"filename");
+	MakeComm	(0X1016AC,	"processId");
+	MakeComm	(0X1016B0,	"filename");
+	MakeComm	(0X1016B8,	"processId");
+	MakeComm	(0X1016BC,	"filename");
 	MakeCode	(x=0X1016D4);
 	OpOff		(x,	1,	0);
 	OpOff		(x,	129,	0);
@@ -1280,10 +1289,19 @@ static Bytes_0(void) {
 	MakeDword	(x=0X10187C);
 	OpOff		(x,	0,	0);
 	OpOff		(x,	128,	0);
-	MakeDword	(0X101880);
-	MakeDword	(0X101884);
-	MakeDword	(0X101888);
-	MakeDword	(0X10188C);
+	MakeDword	(x=0X101880);
+	OpOff		(x,	0,	0);
+	OpOff		(x,	128,	0);
+	MakeName	(0X101880,	"filename");
+	MakeDword	(x=0X101884);
+	OpOff		(x,	0,	0);
+	OpOff		(x,	128,	0);
+	MakeDword	(x=0X101888);
+	OpOff		(x,	0,	0);
+	OpOff		(x,	128,	0);
+	MakeDword	(x=0X10188C);
+	OpOff		(x,	0,	0);
+	OpOff		(x,	128,	0);
 	MakeDword	(0X101890);
 	MakeDword	(0X101894);
 	MakeDword	(x=0X101898);
@@ -1911,6 +1929,9 @@ static Bytes_0(void) {
 	OpStkvar	(x,	1);
 	MakeCode	(x=0X10285C);
 	OpStkvar	(x,	1);
+	MakeComm	(0X102860,	"threadContext");
+	MakeComm	(0X102864,	"hProcess");
+	MakeComm	(0X102868,	"threadId");
 	MakeCode	(x=0X102870);
 	OpStkvar	(x,	1);
 	MakeCode	(x=0X102874);
@@ -1978,6 +1999,9 @@ static Bytes_0(void) {
 	MakeComm	(0X102A24,	"handle");
 	MakeCode	(x=0X102A30);
 	OpStkvar	(x,	1);
+	MakeComm	(0X102A5C,	"threadId");
+	MakeComm	(0X102A60,	"threadContext");
+	MakeComm	(0X102A64,	"hProcess");
 	MakeCode	(x=0X102A64);
 	OpStkvar	(x,	1);
 	MakeCode	(x=0X102A6C);
@@ -2751,6 +2775,8 @@ static Bytes_0(void) {
 	MakeCode	(x=0X103BA0);
 	OpOff		(x,	1,	0);
 	OpOff		(x,	129,	0);
+	MakeCode	(x=0X103BA4);
+	OpStkvar	(x,	1);
 	MakeCode	(x=0X103BAC);
 	OpOff		(x,	1,	0X10AED8);
 	OpOff		(x,	129,	0X10AED8);
@@ -2760,6 +2786,8 @@ static Bytes_0(void) {
 	MakeCode	(x=0X103BBC);
 	OpOff		(x,	1,	0);
 	OpOff		(x,	129,	0);
+	MakeCode	(x=0X103BC8);
+	OpStkvar	(x,	1);
 	MakeCode	(x=0X103BDC);
 	OpOff		(x,	1,	0);
 	OpOff		(x,	129,	0);
@@ -3322,6 +3350,7 @@ static Bytes_0(void) {
 	OpOff		(x,	0,	0);
 	OpOff		(x,	128,	0);
 	MakeCode	(0X104638);
+	MakeName	(0X104638,	"dumpProcessToFile");
 	MakeComm	(0X104640,	"archive");
 	MakeCode	(x=0X104654);
 	OpStkvar	(x,	1);
@@ -3591,6 +3620,10 @@ static Bytes_0(void) {
 	OpStkvar	(x,	1);
 	MakeDword	(0X104B90);
 	MakeCode	(0X104B94);
+	MakeCode	(x=0X104B9C);
+	OpStkvar	(x,	1);
+	MakeCode	(x=0X104BD4);
+	OpStkvar	(x,	1);
 	MakeDword	(0X104BD8);
 	MakeDword	(0X104BDC);
 	MakeDword	(0X104BE0);
@@ -3634,6 +3667,8 @@ static Bytes_0(void) {
 	MakeComm	(0X104CC0,	"entryCount");
 	MakeCode	(x=0X104CD0);
 	OpStkvar	(x,	1);
+	MakeComm	(0X104CE0,	"processId");
+	MakeComm	(0X104CE4,	"filename");
 	MakeCode	(x=0X104CE4);
 	OpStkvar	(x,	1);
 	MakeCode	(0X104CF0);
@@ -3826,6 +3861,7 @@ static Bytes_0(void) {
 	MakeDword	(0X105160);
 	MakeDword	(0X105164);
 	MakeCode	(0X105168);
+	MakeName	(0X105168,	"rtGetThreadContext");
 	MakeComm	(0X105178,	"thread");
 	MakeCode	(x=0X105178);
 	OpStkvar	(x,	1);
@@ -3899,6 +3935,11 @@ static Bytes_0(void) {
 	OpOff		(x,	0,	0);
 	OpOff		(x,	128,	0);
 	MakeCode	(0X105398);
+	MakeComm	(0X1053AC,	"size");
+	MakeCode	(x=0X1053AC);
+	OpStkvar	(x,	1);
+	MakeCode	(x=0X1053C0);
+	OpStkvar	(x,	1);
 	MakeCode	(0X1053CC);
 	MakeCode	(x=0X1053E4);
 	OpStkvar	(x,	1);
@@ -5355,6 +5396,15 @@ static Bytes_0(void) {
 	MakeComm	(0X1077F4,	"handle");
 	MakeCode	(x=0X1077F4);
 	OpStkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	MakeDword	(x=0X10780C);
 	OpOff		(x,	0,	0);
 	OpOff		(x,	128,	0);
@@ -5421,15 +5471,6 @@ static Bytes_0(void) {
 	OpHex		(x,	1);
 	MakeCode	(x=0X107B04);
 	OpHex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	MakeCode	(0X107B2C);
 	MakeCode	(x=0X107B34);
 	OpStkvar	(x,	1);
@@ -5746,6 +5787,7 @@ static Bytes_1(void) {
 	MakeDword	(0X1097E8);
 	MakeArray	(0X1097E8,	0X17E);
 	MakeCode	(0X109DE0);
+	MakeName	(0X109DE0,	"dumpCmd");
 	MakeDword	(0X109E0C);
 	MakeDword	(x=0X109E10);
 	OpOff		(x,	0,	0);
@@ -6050,9 +6092,14 @@ static Bytes_1(void) {
 	MakeName	(0X10AB43,	"aPnameS");
 	MakeByte	(0X10AB4D);
 	MakeArray	(0X10AB4D,	0X3);
-	MakeCode	(0X10AB50);
-	MakeStr		(0X10AB76,	0X10AB8B);
-	MakeName	(0X10AB76,	"aEtsizeFailed08x");
+	MakeStr		(0X10AB50,	0X10AB52);
+	MakeName	(0X10AB50,	"aP");
+	MakeStr		(0X10AB52,	0X10AB57);
+	MakeName	(0X10AB52,	"aInfo");
+	MakeStr		(0X10AB57,	0X10AB6E);
+	MakeName	(0X10AB57,	"aOpenfileFailed08x");
+	MakeStr		(0X10AB6E,	0X10AB8B);
+	MakeName	(0X10AB6E,	"aFsfile_getsizeFailed08x");
 	MakeStr		(0X10AB8B,	0X10ABB1);
 	MakeName	(0X10AB8B,	"aRtloadfileto_0");
 	MakeStr		(0X10ABB1,	0X10ABCB);
@@ -6200,7 +6247,7 @@ static Functions_0(void) {
 	SetFunctionFlags(0X100124,0x400);
 	MakeFrame(0X100124, 0X38, 0, 0);
 	MakeFunction    (0X1001D0,0X1001FC);
-	SetFunctionFlags(0X1001D0,0x444);
+	SetFunctionFlags(0X1001D0,0x404);
 	SetType(0X1001D0, "void __usercall paint_pixel(int x@<R0>, int y@<R1>, unsigned __int8 r@<R2>, unsigned __int8 g@<R3>, unsigned __int8 b, int screen);");
 	MakeFrame(0X1001D0, 0, 0, 0);
 	MakeLocal(0X1001D0, 0X1001FC, "[bp+0]", "b");
@@ -6351,6 +6398,9 @@ static Functions_0(void) {
 	MakeFrame(0X100EEC, 0X8, 0, 0);
 	MakeFunction    (0X100F20,0X100F38);
 	SetFunctionFlags(0X100F20,0x400);
+	MakeFunction    (0X100F3C,0X100F60);
+	SetFunctionFlags(0X100F3C,0x400);
+	MakeFrame(0X100F3C, 0X8, 0, 0);
 	MakeFunction    (0X100F64,0X10110C);
 	SetFunctionFlags(0X100F64,0x400);
 	MakeFrame(0X100F64, 0X6458, 0, 0);
@@ -6391,6 +6441,9 @@ static Functions_0(void) {
 	MakeFunction    (0X101594,0X1015BC);
 	SetFunctionFlags(0X101594,0x400);
 	MakeFrame(0X101594, 0X8, 0, 0);
+	MakeFunction    (0X1015C0,0X1015D4);
+	SetFunctionFlags(0X1015C0,0x400);
+	MakeFrame(0X1015C0, 0X8, 0, 0);
 	MakeFunction    (0X1015D8,0X101860);
 	SetFunctionFlags(0X1015D8,0x400);
 	SetType(0X1015D8, "int __cdecl main(int argc, const char **argv, const char **envp);");
@@ -6411,6 +6464,9 @@ static Functions_0(void) {
 	MakeFunction    (0X1019A0,0X1019A8);
 	SetFunctionFlags(0X1019A0,0x404);
 	SetType(0X1019A0, "void __stdcall sleep(s64 ns);");
+	MakeFunction    (0X1019A8,0X1019C0);
+	SetFunctionFlags(0X1019A8,0x400);
+	MakeFrame(0X1019A8, 0X28, 0, 0);
 	MakeFunction    (0X1019C0,0X1019CC);
 	SetFunctionFlags(0X1019C0,0x404);
 	MakeFunction    (0X1019CC,0X1019D8);
@@ -6528,7 +6584,7 @@ static Functions_0(void) {
 	MakeFunction    (0X10336C,0X103380);
 	SetFunctionFlags(0X10336C,0x404);
 	MakeFunction    (0X103380,0X1033A8);
-	SetFunctionFlags(0X103380,0x444);
+	SetFunctionFlags(0X103380,0x404);
 	MakeFunction    (0X1033A8,0X1033C8);
 	SetFunctionFlags(0X1033A8,0x400);
 	MakeFrame(0X1033A8, 0X10, 0, 0);
@@ -6570,6 +6626,9 @@ static Functions_0(void) {
 	MakeFunction    (0X103B68,0X103B8C);
 	SetFunctionFlags(0X103B68,0x400);
 	MakeFrame(0X103B68, 0X10, 0, 0);
+	MakeFunction    (0X103B90,0X103BE8);
+	SetFunctionFlags(0X103B90,0x400);
+	MakeFrame(0X103B90, 0X18, 0, 0);
 	MakeFunction    (0X103BF4,0X103C1C);
 	SetFunctionFlags(0X103BF4,0x400);
 	MakeFrame(0X103BF4, 0X8, 0, 0);
@@ -6636,6 +6695,7 @@ static Functions_0(void) {
 	MakeLocal(0X104578, 0X104630, "[bp-0X224]", "process");
 	MakeFunction    (0X104638,0X1047CC);
 	SetFunctionFlags(0X104638,0x400);
+	SetType(0X104638, "void __cdecl dumpProcessToFile(unsigned int processId, char *filename);");
 	MakeFrame(0X104638, 0X1078, 0, 0);
 	MakeLocal(0X104638, 0X1047CC, "[bp-0X105C]", "openflags");
 	MakeLocal(0X104638, 0X1047CC, "[bp-0X1058]", "attributes");
@@ -6660,10 +6720,14 @@ static Functions_0(void) {
 	SetFunctionFlags(0X104B0C,0x400);
 	MakeFrame(0X104B0C, 0X28, 0, 0);
 	MakeLocal(0X104B0C, 0X104B90, "[bp-0X1C]", "hProcess");
+	MakeFunction    (0X104B94,0X104BD8);
+	SetFunctionFlags(0X104B94,0x400);
+	MakeFrame(0X104B94, 0X58, 0, 0);
 	MakeFunction    (0X104BE8,0X104D34);
 	SetFunctionFlags(0X104BE8,0x400);
 	MakeFrame(0X104BE8, 0X6C0, 0, 0);
 	MakeLocal(0X104BE8, 0X104D34, "[bp-0X6BC]", "entryCount");
+	MakeLocal(0X104BE8, 0X104D34, "[bp-0X68C]", "filename");
 	MakeLocal(0X104BE8, 0X104D34, "[bp-0X658]", "processIds");
 	MakeLocal(0X104BE8, 0X104D34, "[bp-0X4C8]", "captions");
 	MakeFunction    (0X104D4C,0X104D58);
@@ -6717,6 +6781,7 @@ static Functions_0(void) {
 	MakeLocal(0X105020, 0X105150, "[bp-0X38]", "size");
 	MakeFunction    (0X105168,0X1051E4);
 	SetFunctionFlags(0X105168,0x400);
+	SetType(0X105168, "int __cdecl rtGetThreadContext(Handle hProcess, u32 threadId, void *threadContext);");
 	MakeFrame(0X105168, 0X18, 0, 0);
 	MakeLocal(0X105168, 0X1051E4, "[bp-0X14]", "handle");
 	MakeFunction    (0X1051E8,0X1051FC);
@@ -6743,6 +6808,9 @@ static Functions_0(void) {
 	MakeLocal(0X105318, 0X105390, "[bp-0X2C]", "openflags");
 	MakeLocal(0X105318, 0X105390, "[bp-0X28]", "attributes");
 	MakeLocal(0X105318, 0X105390, "[bp-0X20]", "out");
+	MakeFunction    (0X105398,0X1053CC);
+	SetFunctionFlags(0X105398,0x400);
+	MakeFrame(0X105398, 0X20, 0, 0);
 	MakeFunction    (0X1053CC,0X105408);
 	SetFunctionFlags(0X1053CC,0x400);
 	MakeFrame(0X1053CC, 0X28, 0, 0);
@@ -6869,7 +6937,7 @@ static Functions_0(void) {
 	MakeFunction    (0X106A20,0X106A2C);
 	SetFunctionFlags(0X106A20,0x404);
 	MakeFunction    (0X106A2C,0X106A4C);
-	SetFunctionFlags(0X106A2C,0x444);
+	SetFunctionFlags(0X106A2C,0x404);
 	SetType(0X106A2C, "s32 __stdcall svcControlMemory(u32 *addr_out, u32 addr0, u32 addr1, u32 size, MemOp op, MemPerm perm);");
 	MakeFrame(0X106A2C, 0X8, 0, 0);
 	MakeLocal(0X106A2C, 0X106A4C, "[bp+0]", "op");
@@ -6884,7 +6952,7 @@ static Functions_0(void) {
 	MakeLocal(0X106A54, 0X106A74, "[bp+0]", "thread_priority");
 	MakeLocal(0X106A54, 0X106A74, "[bp+0X4]", "processor_id");
 	MakeFunction    (0X106A74,0X106A7C);
-	SetFunctionFlags(0X106A74,0x445);
+	SetFunctionFlags(0X106A74,0x405);
 	SetType(0X106A74, "void __stdcall __noreturn svcExitThread();");
 	MakeFunction    (0X106A7C,0X106A84);
 	SetFunctionFlags(0X106A7C,0x404);
@@ -7168,7 +7236,7 @@ static Functions_0(void) {
 	SetFunctionFlags(0X1080C4,0x400);
 	MakeFrame(0X1080C4, 0X8, 0, 0);
 	MakeFunction    (0X108148,0X10836C);
-	SetFunctionFlags(0X108148,0x444);
+	SetFunctionFlags(0X108148,0x404);
 	MakeFrame(0X108148, 0X4, 0, 0);
 	MakeFunction    (0X10836C,0X10845C);
 	SetFunctionFlags(0X10836C,0x444);
@@ -7182,8 +7250,6 @@ static Functions_0(void) {
 	MakeFunction    (0X109DE0,0X109E0C);
 	SetFunctionFlags(0X109DE0,0x400);
 	MakeFrame(0X109DE0, 0X38, 0, 0);
-	MakeFunction    (0X10AB50,0X10AB76);
-	SetFunctionFlags(0X10AB50,0x400);
 }
 
 //------------------------------------------------------------------------
