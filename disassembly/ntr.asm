@@ -61,7 +61,6 @@ MEMPERM_MAX	 EQU 0xFFFFFFFF
 ; Input	MD5   :	3993DDD97E8DC4E6F4A94E416705014B
 ; Input	CRC32 :	38ECC72B
 
-; ---------------------------------------------------------------------------
 ; File Name   :	D:\STATION\NTR\ntr.bin
 ; Format      :	Binary file
 ; Base Address:	0000h Range: 100100h - 10B560h Loaded length: B460h
@@ -78,33 +77,28 @@ MEMPERM_MAX	 EQU 0xFFFFFFFF
 		; ORG 0x100100
 		CODE32
 
-ntrBase					; DATA XREF: nsDbgPrint_2+14o
-					; nsDbgPrint_2+18o ...
+; =============== S U B	R O U T	I N E =======================================
+
+
+ntrBase					; DATA XREF: ntrEntry+Co ntrEntry+10o	...
 		B	ntrEntry
-; ---------------------------------------------------------------------------
+; End of function ntrBase
 
-nsDbgPrint				; DATA XREF: sub_1014DC+18o
+; ---------------------------------------------------------------------------
+nsDbgPrint	DCD 0xE1A00000		; DATA XREF: sub_1014DC+18o
 					; ROM:off_10155Co ...
-		NOP
-		NOP
-
-nsDbgPrint_0
-		NOP
-; ---------------------------------------------------------------------------
+dword_100108	DCD 0xE1A00000		; DATA XREF: main+28r
+nsDbgPrint_0	DCD 0xE1A00000		; DATA XREF: main+34r
 dword_100110	DCD 0xE1A00000		; DATA XREF: sub_1014DC+20r
 nsDbgPrint_1	DCD 0xE1A00000		; DATA XREF: sub_1014DC+24r
-; ---------------------------------------------------------------------------
-		NOP
+		DCD 0xE1A00000
+nsDbgPrint_2	DCD 0xE1A00000
+		DCD 0xE1A00000
 
 ; =============== S U B	R O U T	I N E =======================================
 
-; Attributes: library function
 
-nsDbgPrint_2
-		NOP
-		NOP
-
-ntrEntry				; CODE XREF: ROM:ntrBasej
+ntrEntry				; CODE XREF: ntrBasej
 		STMFD	SP!, {R0-R12,LR}
 		MRS	R0, CPSR
 		STMFD	SP!, {R0}
@@ -116,7 +110,7 @@ ntrEntry				; CODE XREF: ROM:ntrBasej
 		ADD	R6, R6,	R5
 		ADD	R7, R7,	R5
 
-loc_10014C				; CODE XREF: nsDbgPrint_2+50j
+loc_10014C				; CODE XREF: ntrEntry+48j
 		LDMIA	R6!, {R3,R4}
 		CMP	R4, #0x17
 		BNE	loc_100168
@@ -125,7 +119,7 @@ loc_10014C				; CODE XREF: nsDbgPrint_2+50j
 		ADD	R4, R4,	R5
 		STR	R4, [R3]
 
-loc_100168				; CODE XREF: nsDbgPrint_2+38j
+loc_100168				; CODE XREF: ntrEntry+30j
 		CMP	R6, R7
 		BCC	loc_10014C
 		LDR	R0, =0xFFFF8001
@@ -146,19 +140,19 @@ loc_100180				; DATA XREF: sub_1034D0+3Co
 
 locret_1001A0				; DATA XREF: main+184o	main+190o ...
 		BX	LR
-; End of function nsDbgPrint_2
+; End of function ntrEntry
 
 ; ---------------------------------------------------------------------------
-nsDbgPrint_3	ALIGN 0x10
-		DCB    0
-		DCB 0xF0, 0x29,	0xE1
-off_1001B4	DCD ntrBase		; DATA XREF: nsDbgPrint_2+14r
+nsDbgPrint_3	DCD 0xE1A00000
+		DCD 0xE1A00000
+		DCD 0xE1A00000
+		DCD 0xE129F000
+off_1001B4	DCD ntrBase		; DATA XREF: ntrEntry+Cr
 					; ROM:off_1086C4o
-off_1001B8	DCD off_1086C4		; DATA XREF: nsDbgPrint_2+20r
-off_1001BC	DCD aUsrLibLd_so_1	; DATA XREF: nsDbgPrint_2+24r
-					; nsDbgPrint_2+5Cr
+off_1001B8	DCD off_1086C4		; DATA XREF: ntrEntry+18r
+off_1001BC	DCD aUsrLibLd_so_1	; DATA XREF: ntrEntry+1Cr ntrEntry+54r
 					; "/usr/lib/ld.so.1"
-dword_1001C0	DCD 0xFFFF8001		; DATA XREF: nsDbgPrint_2+54r
+dword_1001C0	DCD 0xFFFF8001		; DATA XREF: ntrEntry+4Cr
 nsDbgPrint_4	ALIGN 0x10
 ; [0000002C BYTES: COLLAPSED FUNCTION paint_pixel. PRESS KEYPAD	CTRL-"+" TO EXPAND]
 
@@ -380,8 +374,8 @@ loc_1003F0				; CODE XREF: paint_word+38j
 
 
 ; void __usercall print(unsigned __int8	*s@<R0>, int x@<R1>, int y@<R2>, unsigned __int8 r@<R3>, unsigned __int8 g, unsigned __int8 b)
-print					; CODE XREF: ROM:001004C0p
-					; ROM:0010050Cp ...
+print					; CODE XREF: sub_100484+3Cp
+					; sub_1004CC+40p ...
 
 var_30		= -0x30
 var_2C		= -0x2C
@@ -427,50 +421,80 @@ b		=  4
 
 ; ---------------------------------------------------------------------------
 off_100480	DCD dword_108634	; DATA XREF: print+18r
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_100484
+
+g		= -0x20
+b		= -0x1C
+ret		= -0x14
+arg_0		=  0
+arg_4		=  4
+
 		STMFD	SP!, {R0-R6,LR}
 		MOV	R6, R1
 		MOV	R5, R2
-		ADD	R1, SP,	#0xC
-		MOV	R2, #3
+		ADD	R1, SP,	#0x20+ret ; ret
+		MOV	R2, #3		; max_len
 		MOV	R4, R3
 		BL	sub_101900
-		LDRB	R3, [SP,#0x20]
-		ADD	R0, SP,	#0xC
-		MOV	R1, R6
-		STR	R3, [SP]
-		LDRB	R3, [SP,#0x24]
-		MOV	R2, R5
-		STR	R3, [SP,#4]
-		MOV	R3, R4
+		LDRB	R3, [SP,#0x20+arg_0]
+		ADD	R0, SP,	#0x20+ret ; s
+		MOV	R1, R6		; x
+		STR	R3, [SP,#0x20+g] ; g
+		LDRB	R3, [SP,#0x20+arg_4]
+		MOV	R2, R5		; y
+		STR	R3, [SP,#0x20+b] ; b
+		MOV	R3, R4		; r
 		BL	print
 		ADD	SP, SP,	#0x10
 		LDMFD	SP!, {R4-R6,PC}
-; ---------------------------------------------------------------------------
+; End of function sub_100484
+
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_1004CC
+
+g		= -0x30
+b		= -0x2C
+ret		= -0x24
+arg_0		=  0
+arg_4		=  4
+
 		STMFD	SP!, {R4-R6,LR}
 		SUB	SP, SP,	#0x20
 		MOV	R6, R1
 		MOV	R5, R2
-		ADD	R1, SP,	#0xC
-		MOV	R2, #0x11
+		ADD	R1, SP,	#0x30+ret ; ret
+		MOV	R2, #0x11	; max_len
 		MOV	R4, R3
 		BL	u32_to_string
-		LDRB	R3, [SP,#0x30]
-		ADD	R0, SP,	#0xC
-		MOV	R1, R6
-		STR	R3, [SP]
-		LDRB	R3, [SP,#0x34]
-		MOV	R2, R5
-		STR	R3, [SP,#4]
-		MOV	R3, R4
+		LDRB	R3, [SP,#0x30+arg_0]
+		ADD	R0, SP,	#0x30+ret ; s
+		MOV	R1, R6		; x
+		STR	R3, [SP,#0x30+g] ; g
+		LDRB	R3, [SP,#0x30+arg_4]
+		MOV	R2, R5		; y
+		STR	R3, [SP,#0x30+b] ; b
+		MOV	R3, R4		; r
 		BL	print
 		ADD	SP, SP,	#0x20
 		LDMFD	SP!, {R4-R6,PC}
-; ---------------------------------------------------------------------------
+; End of function sub_1004CC
+
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_100518
 		STMFD	SP!, {R4-R8,LR}
 		MOV	R8, R1
 		MOV	R7, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		MOV	R3, #0x10000
 		STR	R3, [R0]
 		LDR	R3, =0x800002
@@ -479,21 +503,27 @@ off_100480	DCD dword_108634	; DATA XREF: print+18r
 		LDR	R5, [R0,#0x104]
 		STR	R3, [R0,#0x100]
 		STR	R8, [R0,#0x104]
-		MOV	R0, R7
+		MOV	R0, R7		; session
 		BL	svcSendSyncRequest
 		CMP	R0, #0
 		STREQ	R6, [R4,#0x100]
 		STREQ	R5, [R4,#0x104]
 		LDREQ	R0, [R4,#4]
 		LDMFD	SP!, {R4-R8,PC}
+; End of function sub_100518
+
 ; ---------------------------------------------------------------------------
-dword_100564	DCD 0x800002		; DATA XREF: ROM:00100530r
-; ---------------------------------------------------------------------------
+dword_100564	DCD 0x800002		; DATA XREF: sub_100518+18r
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_100568
 		STMFD	SP!, {R3-R9,LR}
 		MOV	R5, R1
 		MOV	R9, R2
 		MOV	R8, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x260042
 		STMIA	R0, {R3,R9}
 		LDR	R3, =0x800002
@@ -504,16 +534,18 @@ dword_100564	DCD 0x800002		; DATA XREF: ROM:00100530r
 		STR	R5, [R0,#0x104]
 		STR	R3, [R0,#8]
 		STR	R5, [R0,#0xC]
-		MOV	R0, R8
+		MOV	R0, R8		; session
 		BL	svcSendSyncRequest
 		CMP	R0, #0
 		STREQ	R7, [R4,#0x100]
 		STREQ	R6, [R4,#0x104]
 		LDREQ	R0, [R4,#4]
 		LDMFD	SP!, {R3-R9,PC}
+; End of function sub_100568
+
 ; ---------------------------------------------------------------------------
-dword_1005C0	DCD 0x260042		; DATA XREF: ROM:0010057Cr
-dword_1005C4	DCD 0x800002		; DATA XREF: ROM:00100584r
+dword_1005C0	DCD 0x260042		; DATA XREF: sub_100568+14r
+dword_1005C4	DCD 0x800002		; DATA XREF: sub_100568+1Cr
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -523,7 +555,7 @@ ACU_GetWifiStatus			; CODE XREF: ACU_WaitInternetConnection+2Cp
 		STMFD	SP!, {R4-R6,LR}
 		MOV	R5, R1
 		MOV	R6, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		MOV	R3, #0xD0000
 		MOV	R4, R0
 		STR	R3, [R0]
@@ -584,7 +616,7 @@ server		DCD aAcU		; DATA XREF: ACU_WaitInternetConnection+Cr
 
 
 ; void __fastcall c_entry(uint32_t *reg)
-c_entry					; CODE XREF: nsDbgPrint_2+74p
+c_entry					; CODE XREF: ntrEntry+6Cp
 		LDR	R3, =IoBasePad
 		LDR	R1, =0x10B560	; argv
 		MOV	R0, #0		; argc
@@ -616,10 +648,10 @@ IRQHandler
 
 
 ; Result __fastcall FSUSER_Initialize(Handle handle)
-FSUSER_Initialize			; CODE XREF: ROM:0010389Cp
+FSUSER_Initialize			; CODE XREF: sub_103860+3Cp
 		STMFD	SP!, {R3-R5,LR}
 		MOV	R5, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R2, =0x8010002
 		MOV	R3, #0x20
 		MOV	R4, R0
@@ -656,7 +688,7 @@ attributes	=  0x20
 		LDR	R5, [SP,#0x20+arg_14]
 		STMIB	R1, {R2,R3}
 		MOV	R7, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R2, =0x80201C2
 		MOV	R3, #0
 		STMIA	R0, {R2,R3}
@@ -718,7 +750,7 @@ attributes	=  0x20
 		STMIB	R1, {R2,R3}
 		MOV	R7, R0
 		LDR	R5, [SP,#0x20+archive]
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R2, =0x8030204
 		MOV	R3, #0
 		STMIA	R0, {R2,R3}
@@ -768,14 +800,14 @@ dword_10081C	DCD 0x8030204		; DATA XREF: FSUSER_OpenFileDirectly+24r
 
 
 ; Result __fastcall FSUSER_OpenArchive(Handle handle, FS_archive *archive)
-FSUSER_OpenArchive			; CODE XREF: ROM:00101160p
+FSUSER_OpenArchive			; CODE XREF: sub_10111C+44p
 					; sub_104044+4Cp
 		CMP	R1, #0
 		BEQ	loc_100898
 		STMFD	SP!, {R4-R6,LR}
 		MOV	R5, R1
 		MOV	R6, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x80C00C2
 		STR	R3, [R0]
 		LDR	R3, [R5]
@@ -831,7 +863,7 @@ arg_18		=  0x18
 		LDR	R5, [SP,#0x20+arg_14]
 		STMIB	R1, {R2,R3}
 		MOV	R7, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x80B0102
 		STR	R3, [R0]
 		LDR	R3, [SP,#0x20+arg_8]
@@ -869,13 +901,13 @@ dword_10092C	DCD 0x80B0102		; DATA XREF: FSUSER_OpenDirectory+20r
 
 
 ; Result __fastcall FSUSER_CloseArchive(Handle handle, FS_archive *archive)
-FSUSER_CloseArchive			; CODE XREF: ROM:001011A8p
+FSUSER_CloseArchive			; CODE XREF: sub_10111C+8Cp
 		CMP	R1, #0
 		BEQ	loc_100978
 		STMFD	SP!, {R4-R6,LR}
 		MOV	R5, R1
 		MOV	R6, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x80E0080
 		STR	R3, [R0]
 		LDR	R3, [R5,#0x10]
@@ -906,7 +938,7 @@ FSFILE_Close				; CODE XREF: sub_1011E4+7Cp
 					; j_FSFILE_Closej ...
 		STMFD	SP!, {R3-R5,LR}
 		MOV	R5, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x8080000
 		MOV	R4, R0
 		STR	R3, [R0]
@@ -936,7 +968,7 @@ arg_4		=  4
 		LDR	R5, [SP,#0x20+arg_4]
 		MOV	R7, R0
 		MOV	R6, R1
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x80200C2
 		STR	R5, [R0,#0xC]
 		STMIA	R0, {R3,R9}
@@ -978,7 +1010,7 @@ arg_8		=  8
 		LDR	R5, [SP,#0x20+arg_4]
 		MOV	R7, R0
 		MOV	R6, R1
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x8030102
 		STMIA	R0, {R3,R9}
 		LDR	R3, [SP,#0x20+arg_8]
@@ -1014,7 +1046,7 @@ FSFILE_GetSize				; CODE XREF: sub_1021FC+A8p
 		STMFD	SP!, {R4-R6,LR}
 		MOV	R6, R0
 		MOV	R5, R1
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x8040000
 		MOV	R4, R0
 		STR	R3, [R0]
@@ -1041,7 +1073,7 @@ FSFILE_SetSize
 		MOV	R7, R2
 		MOV	R6, R3
 		MOV	R5, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x8050080
 		MOV	R4, R0
 		STMIA	R0, {R3,R7}
@@ -1067,7 +1099,7 @@ FSDIR_Read				; CODE XREF: sub_100F64+CCp
 		MOV	R8, R3
 		MOV	R7, R0
 		MOV	R5, R1
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		MOV	R12, #0x228
 		LDR	R3, =0x8010042
 		MUL	R2, R12, R6
@@ -1099,7 +1131,7 @@ FSDIR_Close				; CODE XREF: sub_100F64+190p
 					; sub_103C28+ECp
 		STMFD	SP!, {R3-R5,LR}
 		MOV	R5, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x8020000
 		MOV	R4, R0
 		STR	R3, [R0]
@@ -1138,9 +1170,9 @@ arg_4		=  4
 		STMFD	SP!, {R0,R1,R4-R6,LR}
 		LDR	R5, [SP,#0x18+arg_4]
 		LDR	R4, [SP,#0x18+arg_0]
-		LDR	R12, =loc_10AE78
+		LDR	R12, =dword_10AE78
 		STMEA	SP, {R4,R5}
-		BLX	R12 ; loc_10AE78
+		BLX	R12 ; dword_10AE78
 		CMP	R5, #0x36C0
 		MOV	R6, R0
 		BNE	loc_100BFC
@@ -1162,7 +1194,7 @@ loc_100BFC				; CODE XREF: sub_100BB4+20j
 ; End of function sub_100BB4
 
 ; ---------------------------------------------------------------------------
-off_100C08	DCD loc_10AE78		; DATA XREF: sub_100BB4+Cr
+off_100C08	DCD dword_10AE78	; DATA XREF: sub_100BB4+Cr
 dword_100C0C	DCD 0x48444D53		; DATA XREF: sub_100BB4+28r
 off_100C10	DCD aPatchingSmdh	; DATA XREF: sub_100BB4+34r
 					; "patching smdh\n"
@@ -1471,7 +1503,7 @@ dword_100F60	DCD 0x109E75		; DATA XREF: ROM:00100F4Cr
 
 
 sub_100F64				; CODE XREF: sub_100F64+184p
-					; ROM:0010119Cp
+					; sub_10111C+80p
 
 var_6450	= -0x6450
 var_6448	= -0x6448
@@ -1623,56 +1655,71 @@ dword_101110	DCD 0x109E85		; DATA XREF: sub_100F64+98r
 dword_101114	DCD 0x109EAB		; DATA XREF: sub_100F64+12Cr
 off_101118	DCD aSS			; DATA XREF: sub_100F64+160r
 					; "%s%s"
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_10111C
+
+var_F8		= -0xF8
+var_F0		= -0xF0
+var_EC		= -0xEC
+var_E8		= -0xE8
+var_E4		= -0xE4
+var_E0		= -0xE0
+var_D8		= -0xD8
+
 		STMFD	SP!, {R4,R5,LR}
 		SUB	SP, SP,	#0xF4
-		ADD	R4, SP,	#0x10
+		ADD	R4, SP,	#0x100+var_F0
 		MOV	R2, #0x18
 		MOV	R1, #0
 		MOV	R0, R4
 		BL	memset
 		LDR	R3, =0x567890AB
 		LDR	R5, =IoBasePad
-		STR	R3, [SP,#0x10]
+		STR	R3, [SP,#0x100+var_F0]
 		MOV	R3, #1
-		STRB	R3, [SP,#0x14]
-		STR	R3, [SP,#0x18]
+		STRB	R3, [SP,#0x100+var_EC]
+		STR	R3, [SP,#0x100+var_E8]
 		LDR	R3, =0x10A4DD
-		LDR	R0, [R5,#(fsUserHandle - 0x10ACF4)]
-		MOV	R1, R4
-		STR	R3, [SP,#0x1C]
+		LDR	R0, [R5,#(fsUserHandle - 0x10ACF4)] ; handle
+		MOV	R1, R4		; archive
+		STR	R3, [SP,#0x100+var_E4]
 		BL	FSUSER_OpenArchive
 		SUBS	R2, R0,	#0
 		BEQ	loc_101184
-		ADD	R0, SP,	#0x28
+		ADD	R0, SP,	#0x100+var_D8
 		LDR	R1, =0x109EBF
 		BL	sub_107B90
-		ADD	R0, SP,	#0x28
+		ADD	R0, SP,	#0x100+var_D8
 		BL	sub_107574
 		B	loc_1011AC
 ; ---------------------------------------------------------------------------
 
-loc_101184				; CODE XREF: ROM:00101168j
+loc_101184				; CODE XREF: sub_10111C+4Cj
 		LDR	R3, =asc_109EDC	; "/"
-		STR	R3, [SP,#8]
-		ADD	R3, SP,	#0x20
+		STR	R3, [SP,#0x100+var_F8]
+		ADD	R3, SP,	#0x100+var_E0
 		LDMIA	R3, {R0,R1}
 		STMEA	SP, {R0,R1}
 		LDMIA	R4, {R0-R3}
 		BL	sub_100F64
-		LDR	R0, [R5,#(fsUserHandle - 0x10ACF4)]
-		MOV	R1, R4
+		LDR	R0, [R5,#(fsUserHandle - 0x10ACF4)] ; handle
+		MOV	R1, R4		; archive
 		BL	FSUSER_CloseArchive
 
-loc_1011AC				; CODE XREF: ROM:00101180j
+loc_1011AC				; CODE XREF: sub_10111C+64j
 		ADD	SP, SP,	#0xF4
 		LDMFD	SP!, {R4,R5,PC}
+; End of function sub_10111C
+
 ; ---------------------------------------------------------------------------
-dword_1011B4	DCD 0x567890AB		; DATA XREF: ROM:00101138r
-off_1011B8	DCD IoBasePad		; DATA XREF: ROM:0010113Cr
-dword_1011BC	DCD 0x10A4DD		; DATA XREF: ROM:00101150r
-dword_1011C0	DCD 0x109EBF		; DATA XREF: ROM:00101170r
-off_1011C4	DCD asc_109EDC		; DATA XREF: ROM:loc_101184r
+dword_1011B4	DCD 0x567890AB		; DATA XREF: sub_10111C+1Cr
+off_1011B8	DCD IoBasePad		; DATA XREF: sub_10111C+20r
+dword_1011BC	DCD 0x10A4DD		; DATA XREF: sub_10111C+34r
+dword_1011C0	DCD 0x109EBF		; DATA XREF: sub_10111C+54r
+off_1011C4	DCD asc_109EDC		; DATA XREF: sub_10111C:loc_101184r
 					; "/"
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -1873,16 +1920,25 @@ off_1013E8	DCD dword_1085D4	; DATA XREF: sub_101278+D8r
 off_1013EC	DCD dword_10B51C	; DATA XREF: sub_101278+DCr
 ; s64 dword_1013F0
 dword_1013F0	DCD 0x5F5E100		; DATA XREF: sub_101278:loc_10139Cr
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_1013F4
+
+handle		= -0x18
+var_14		= -0x14
+var_10		= -0x10
+
 		STMFD	SP!, {R0-R2,R4,R5,LR}
-		MOV	R1, R0
-		MOV	R0, SP
+		MOV	R1, R0		; processId
+		MOV	R0, SP		; process
 		BL	svcOpenProcess
 		SUBS	R5, R0,	#0
 		BNE	loc_101450
-		LDR	R0, [SP]
+		LDR	R0, [SP,#0x18+handle]
 		BL	sub_10704C
-		ADD	R4, SP,	#8
+		ADD	R4, SP,	#0x18+var_10
 		MOV	R2, #4
 		STR	R5, [R4,#-4]!
 		ADD	R5, R0,	#4
@@ -1893,14 +1949,16 @@ dword_1013F0	DCD 0x5F5E100		; DATA XREF: sub_101278:loc_10139Cr
 		MOV	R0, R5
 		MOV	R1, R4
 		MOV	R2, #4
-		STR	R3, [SP,#4]
+		STR	R3, [SP,#0x18+var_14]
 		BL	sub_10707C
-		LDR	R0, [SP]
+		LDR	R0, [SP,#0x18+handle] ;	handle
 		BL	svcCloseHandle
 
-loc_101450				; CODE XREF: ROM:00101408j
+loc_101450				; CODE XREF: sub_1013F4+14j
 		ADD	SP, SP,	#0xC
 		LDMFD	SP!, {R4,R5,PC}
+; End of function sub_1013F4
+
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -2073,10 +2131,10 @@ thread		= -0x1C
 		BNE	loc_101720
 		LDR	R0, =0x109F01
 		BL	sub_107200
-		LDR	R3, [R5,#4]
+		LDR	R3, [R5,#(dword_100108 - 0x100104)]
 		MOV	R1, R6
 		STR	R3, [R7,#(off_10AD08 - 0x10ACF4)]
-		LDR	R3, [R5,#8]
+		LDR	R3, [R5,#(nsDbgPrint_0 - 0x100104)]
 		LDR	R5, =sdmcArchive
 		MOV	R2, #0x18
 		MOV	R0, R5
@@ -2326,7 +2384,7 @@ nibble_to_readable			; CODE XREF: sub_101900+18p
 
 
 ; u32 __fastcall sub_101900(u8 byte, unsigned __int8 *ret, int max_len)
-sub_101900				; CODE XREF: ROM:0010049Cp
+sub_101900				; CODE XREF: sub_100484+18p
 		CMP	R2, #2
 		BLE	locret_101938
 		STMFD	SP!, {R3-R5,LR}
@@ -2353,7 +2411,7 @@ locret_101938				; CODE XREF: sub_101900+4j
 ; Attributes: library function
 
 ; u32 __fastcall u32_to_string(u32 byte, unsigned __int8 *ret, int max_len)
-u32_to_string				; CODE XREF: ROM:001004E8p
+u32_to_string				; CODE XREF: sub_1004CC+1Cp
 		CMP	R2, #8
 		BLE	locret_101990
 		STMFD	SP!, {R4-R8,LR}
@@ -4782,17 +4840,39 @@ off_103360	DCD dword_10AEC8	; DATA XREF: sub_103158+DCr
 off_103364	DCD sub_1030F0		; DATA XREF: sub_103158+1B0r
 off_103368	DCD aSvc_createthre	; DATA XREF: sub_103158+1D4r
 					; "svc_createThread failed: %08x"
-; [00000014 BYTES: COLLAPSED FUNCTION OS_ConvertVaddr2Physaddr.	PRESS KEYPAD CTRL-"+" TO EXPAND]
+
+; =============== S U B	R O U T	I N E =======================================
+
+; Attributes: library function
+
+OS_ConvertVaddr2Physaddr
+		ADD	R3, R0,	#0xEC000000
+		CMN	R3, #0xF8000001
+		BHI	osConvertOldLINEARMemToNew
+		ADD	R0, R0,	#0xC000000
+		BX	LR
+; End of function OS_ConvertVaddr2Physaddr
+
 ; [00000028 BYTES: COLLAPSED FUNCTION osConvertOldLINEARMemToNew. PRESS	KEYPAD CTRL-"+" TO EXPAND]
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_1033A8
+
+process		= -0xC
+var_4		= -4
+
 		STMFD	SP!, {R0-R2,LR}
-		MOV	R1, #0x25
-		ADD	R0, SP,	#4
+		MOV	R1, #0x25	; processId
+		ADD	R0, SP,	#0x10+process ;	process
 		BL	svcOpenProcess
-		STR	R0, [SP,#4]
+		STR	R0, [SP,#0x10+process]
 		BL	svcCloseHandle
 		ADD	SP, SP,	#0xC
-		LDR	PC, [SP],#4
+		LDR	PC, [SP+4+var_4],#4
+; End of function sub_1033A8
+
 ; [00000008 BYTES: COLLAPSED FUNCTION __udiv_w_sdiv. PRESS KEYPAD CTRL-"+" TO EXPAND]
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -4873,9 +4953,11 @@ locret_10347C				; CODE XREF: sub_103454+14j
 off_103480	DCD aFsUser		; DATA XREF: sub_103454+8r
 					; "fs:USER"
 off_103484	DCD fsUserHandle	; DATA XREF: sub_103454+18r
-; ---------------------------------------------------------------------------
 
-loc_103488				; DATA XREF: sub_10593C+48o
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_103488				; DATA XREF: sub_10593C+48o
 					; ROM:off_1059B4o
 		CMP	R0, #2
 		LDREQ	R3, =dword_1085D8
@@ -4884,13 +4966,13 @@ loc_103488				; DATA XREF: sub_10593C+48o
 		BNE	loc_1034A8
 		LDR	R3, =dword_1085E8
 
-loc_1034A0				; CODE XREF: ROM:00103490j
-					; ROM:001034B0j
+loc_1034A0				; CODE XREF: sub_103488+8j
+					; sub_103488+28j
 		LDR	R0, [R3]
 		BX	LR
 ; ---------------------------------------------------------------------------
 
-loc_1034A8				; CODE XREF: ROM:00103498j
+loc_1034A8				; CODE XREF: sub_103488+10j
 		CMP	R0, #3
 		LDREQ	R3, =dword_1085E4
 		BEQ	loc_1034A0
@@ -4898,10 +4980,12 @@ loc_1034A8				; CODE XREF: ROM:00103498j
 		MOVEQ	R0, #0x14000000
 		MOVNE	R0, #0
 		BX	LR
+; End of function sub_103488
+
 ; ---------------------------------------------------------------------------
-off_1034C4	DCD dword_1085D8	; DATA XREF: ROM:0010348Cr
-off_1034C8	DCD dword_1085E8	; DATA XREF: ROM:0010349Cr
-off_1034CC	DCD dword_1085E4	; DATA XREF: ROM:001034ACr
+off_1034C4	DCD dword_1085D8	; DATA XREF: sub_103488+4r
+off_1034C8	DCD dword_1085E8	; DATA XREF: sub_103488+14r
+off_1034CC	DCD dword_1085E4	; DATA XREF: sub_103488+24r
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -4928,7 +5012,7 @@ var_10		= -0x10
 ; ---------------------------------------------------------------------------
 
 loc_103508				; CODE XREF: sub_1034D0+20j
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R2, =loc_100180
 		MOV	R3, #1
 		STMIA	R0, {R2,R3}
@@ -5044,7 +5128,7 @@ var_8		= -8
 		SUB	SP, SP,	#0x230
 		BL	debounceKey
 		LDR	R3, =aProcessManager ; "Process Manager"
-		LDR	R2, =loc_10AFC4
+		LDR	R2, =dword_10AFC4
 		STR	R3, [SP,#0x238+var_238]
 		LDR	R3, =aEnableDebugger ; "Enable Debugger"
 		MOV	R4, #4
@@ -5132,7 +5216,7 @@ loc_1036F8				; CODE XREF: sub_1035F8+F4j
 		ADD	R0, R3,	R0,LSL#2
 		MOV	R1, #0xC
 		LDR	R2, [R0,#-0x118]
-		LDR	R3, =loc_10AFC4
+		LDR	R3, =dword_10AFC4
 		MLA	R3, R1,	R2, R3
 		LDR	R3, [R3,#8]
 		BLX	R3
@@ -5151,7 +5235,7 @@ loc_103724				; CODE XREF: sub_1035F8+94j
 ; ---------------------------------------------------------------------------
 off_103738	DCD aProcessManager	; DATA XREF: sub_1035F8+Cr
 					; "Process Manager"
-off_10373C	DCD loc_10AFC4		; DATA XREF: sub_1035F8+10r
+off_10373C	DCD dword_10AFC4	; DATA XREF: sub_1035F8+10r
 					; sub_1035F8+114r
 off_103740	DCD aEnableDebugger	; DATA XREF: sub_1035F8+18r
 					; "Enable Debugger"
@@ -5182,7 +5266,7 @@ sub_10375C				; CODE XREF: sub_1058C8+1Cp
 
 loc_103778				; CODE XREF: sub_10375C+10j
 		MOV	R12, #0xC
-		LDR	R5, =loc_10AFC4
+		LDR	R5, =dword_10AFC4
 		MUL	R12, R12, R3
 		ADD	R3, R3,	#1
 		ADD	R4, R5,	R12
@@ -5194,7 +5278,7 @@ loc_103778				; CODE XREF: sub_10375C+10j
 
 ; ---------------------------------------------------------------------------
 off_10379C	DCD dword_10AED8	; DATA XREF: sub_10375C+4r
-off_1037A0	DCD loc_10AFC4		; DATA XREF: sub_10375C+20r
+off_1037A0	DCD dword_10AFC4	; DATA XREF: sub_10375C+20r
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -5263,7 +5347,11 @@ dword_103854	DCD 0x203		; DATA XREF: sub_1037A4+40r
 ; Handle hProcess
 hProcess	DCD 0xFFFF8001		; DATA XREF: sub_1037A4+68r
 dword_10385C	DCD 0x10A6E1		; DATA XREF: sub_1037A4+80r
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_103860
 		STMFD	SP!, {R4,LR}
 		LDR	R4, =fsUserHandle
 		LDR	R3, [R4]
@@ -5275,31 +5363,35 @@ dword_10385C	DCD 0x10A6E1		; DATA XREF: sub_1037A4+80r
 		BNE	loc_103888
 		BL	initSrv
 
-loc_103888				; CODE XREF: ROM:00103880j
-		LDR	R1, =fsUserHandle
+loc_103888				; CODE XREF: sub_103860+20j
+		LDR	R1, =fsUserHandle ; out
 		LDR	R2, =aFsReg	; "fs:REG"
-		MOV	R0, #0
+		MOV	R0, #0		; handleptr
 		BL	srv_getServiceHandle
-		LDR	R0, [R4]
+		LDR	R0, [R4]	; handle
 		BL	FSUSER_Initialize
 		SUBS	R1, R0,	#0
 		BEQ	loc_1038B0
 		LDR	R0, =0x10A707
 		BL	sub_101A14
 
-loc_1038B0				; CODE XREF: ROM:001038A4j
+loc_1038B0				; CODE XREF: sub_103860+44j
 		LDR	R1, [R4]
 		LDR	R0, =0x10A727
 		LDMFD	SP!, {R4,LR}
 		B	sub_101A14
+; End of function sub_103860
+
 ; ---------------------------------------------------------------------------
-off_1038C0	DCD fsUserHandle	; DATA XREF: ROM:00103864r
-					; ROM:loc_103888r
-off_1038C4	DCD srvHandle		; DATA XREF: ROM:00103874r
-off_1038C8	DCD aFsReg		; DATA XREF: ROM:0010388Cr
+; Handle *off_1038C0
+off_1038C0	DCD fsUserHandle	; DATA XREF: sub_103860+4r
+					; sub_103860:loc_103888r
+off_1038C4	DCD srvHandle		; DATA XREF: sub_103860+14r
+; unsigned __int8 *off_1038C8
+off_1038C8	DCD aFsReg		; DATA XREF: sub_103860+2Cr
 					; "fs:REG"
-dword_1038CC	DCD 0x10A707		; DATA XREF: ROM:001038A8r
-dword_1038D0	DCD 0x10A727		; DATA XREF: ROM:001038B4r
+dword_1038CC	DCD 0x10A707		; DATA XREF: sub_103860+48r
+dword_1038D0	DCD 0x10A727		; DATA XREF: sub_103860+54r
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -5534,22 +5626,19 @@ dword_103B64	DCD 0x10A80F		; DATA XREF: sub_1038D4+234r
 
 sub_103B68				; DATA XREF: sub_103BF4+14o
 					; ROM:off_103C24o
-
-; FUNCTION CHUNK AT 0010B354 SIZE 00000040 BYTES
-
 		STMFD	SP!, {R4-R6,LR}
 		MOV	R5, R0
 		MOV	R4, R1
 		BL	sub_1038D4
 		MOV	R0, R5
 		MOV	R1, R4
-		LDR	R3, =loc_10B354
+		LDR	R3, =(dword_10AFC4+0x390)
 		LDMFD	SP!, {R4-R6,LR}
-		BX	R3 ; loc_10B354
+		BX	R3
 ; End of function sub_103B68
 
 ; ---------------------------------------------------------------------------
-off_103B8C	DCD loc_10B354		; DATA XREF: sub_103B68+18r
+off_103B8C	DCD dword_10AFC4+0x390	; DATA XREF: sub_103B68+18r
 ; ---------------------------------------------------------------------------
 		STMFD	SP!, {R4-R8,LR}
 		MOV	R4, R2
@@ -5570,14 +5659,14 @@ off_103B8C	DCD loc_10B354		; DATA XREF: sub_103B68+18r
 		MOV	R1, R6
 		MOV	R2, R4
 		MOV	R3, R5
-		LDR	R12, =loc_10AF84
+		LDR	R12, =dword_10AF84
 		LDMFD	SP!, {R4-R8,LR}
-		BX	R12 ; loc_10AF84
+		BX	R12 ; dword_10AF84
 ; ---------------------------------------------------------------------------
 off_103BE8	DCD dword_10AED8	; DATA XREF: ROM:00103BA0r
 off_103BEC	DCD aRunappletTid00	; DATA XREF: ROM:00103BBCr
 					; "runApplet tid0: %08x, tid1: %08x\n"
-off_103BF0	DCD loc_10AF84		; DATA XREF: ROM:00103BDCr
+off_103BF0	DCD dword_10AF84	; DATA XREF: ROM:00103BDCr
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -5585,7 +5674,7 @@ off_103BF0	DCD loc_10AF84		; DATA XREF: ROM:00103BDCr
 sub_103BF4				; CODE XREF: main+250p
 		LDR	R3, =dword_10AD18
 		STMFD	SP!, {R4,LR}
-		LDR	R4, =dword_10B2C8
+		LDR	R4, =(dword_10AFC4+0x304)
 		LDR	R1, [R3]	; funcAddr
 		MOV	R0, R4		; hook
 		LDR	R2, =sub_103B68	; callbackAddr
@@ -5598,7 +5687,7 @@ sub_103BF4				; CODE XREF: main+250p
 ; ---------------------------------------------------------------------------
 off_103C1C	DCD dword_10AD18	; DATA XREF: sub_103BF4r
 ; RT_HOOK *off_103C20
-off_103C20	DCD dword_10B2C8	; DATA XREF: sub_103BF4+8r
+off_103C20	DCD dword_10AFC4+0x304	; DATA XREF: sub_103BF4+8r
 ; uint32_t off_103C24
 off_103C24	DCD sub_103B68		; DATA XREF: sub_103BF4+14r
 
@@ -5627,7 +5716,7 @@ var_470		= -0x470
 		BL	strlen
 		ADD	R5, SP,	#0x4A8+var_470
 		STR	R4, [SP,#0x4A8+var_474]
-		LDR	R12, =dword_10B394
+		LDR	R12, =(dword_10AFC4+0x3D0)
 		ADD	R3, SP,	#0x4A8+var_498
 		ADD	R0, R0,	#1
 		STR	R0, [SP,#0x4A8+var_478]
@@ -5693,7 +5782,7 @@ loc_103D1C				; CODE XREF: sub_103C28+88j
 ; End of function sub_103C28
 
 ; ---------------------------------------------------------------------------
-off_103D28	DCD dword_10B394	; DATA XREF: sub_103C28+30r
+off_103D28	DCD dword_10AFC4+0x3D0	; DATA XREF: sub_103C28+30r
 off_103D2C	DCD fsUserHandle	; DATA XREF: sub_103C28+54r
 dword_103D30	DCD 0x109E85		; DATA XREF: sub_103C28+7Cr
 
@@ -5706,7 +5795,7 @@ sub_103D34				; CODE XREF: sub_103E94+24p
 		MOV	R2, #0
 		LDR	R3, [R3]
 		STR	R2, [R3]
-		LDR	R2, =dword_10B2C4
+		LDR	R2, =(dword_10AFC4+0x300)
 		LDR	R1, [R2]
 		LDR	R2, =dword_10B3B0
 		STR	R1, [R2]
@@ -5720,7 +5809,7 @@ sub_103D34				; CODE XREF: sub_103E94+24p
 
 ; ---------------------------------------------------------------------------
 off_103D6C	DCD dword_10B3AC	; DATA XREF: sub_103D34r
-off_103D70	DCD dword_10B2C4	; DATA XREF: sub_103D34+10r
+off_103D70	DCD dword_10AFC4+0x300	; DATA XREF: sub_103D34+10r
 off_103D74	DCD dword_10B3B0	; DATA XREF: sub_103D34+18r
 off_103D78	DCD dword_10AED8	; DATA XREF: sub_103D34+20r
 ; ---------------------------------------------------------------------------
@@ -5855,8 +5944,8 @@ sub_103E94				; DATA XREF: sub_104044+134o
 		LDR	R2, [R4,#4]
 		STR	R2, [R3,#0x110]
 		MOV	R2, R5
-		LDR	R3, =loc_10B440
-		BLX	R3 ; loc_10B440
+		LDR	R3, =dword_10B440
+		BLX	R3 ; dword_10B440
 		ADD	SP, SP,	#0x20
 		LDMFD	SP!, {R4-R6,PC}
 ; End of function sub_103E94
@@ -5868,7 +5957,7 @@ dword_103F18	DCD 0x10A8DD		; DATA XREF: sub_103E94+28r
 off_103F1C	DCD a08x08x		; DATA XREF: sub_103E94+3Cr
 					; "%08x%08x"
 off_103F20	DCD dword_10B3AC	; DATA XREF: sub_103E94+4Cr
-off_103F24	DCD loc_10B440		; DATA XREF: sub_103E94+70r
+off_103F24	DCD dword_10B440	; DATA XREF: sub_103E94+70r
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -5930,7 +6019,7 @@ off_103FA8	DCD aOpenprocessF_2	; DATA XREF: sub_103F28+3Cr
 sub_103FAC				; CODE XREF: sub_104044+118p
 		STMFD	SP!, {R4-R6,LR}
 		LDR	R3, =dword_10B3B0
-		LDR	R5, =dword_10B2C4
+		LDR	R5, =(dword_10AFC4+0x300)
 		LDR	R3, [R3]
 		LDR	R4, [R5]
 		RSB	R4, R4,	R3
@@ -5972,7 +6061,7 @@ locret_10402C				; CODE XREF: sub_103FAC+50j
 
 ; ---------------------------------------------------------------------------
 off_104030	DCD dword_10B3B0	; DATA XREF: sub_103FAC+4r
-off_104034	DCD dword_10B2C4	; DATA XREF: sub_103FAC+8r
+off_104034	DCD dword_10AFC4+0x300	; DATA XREF: sub_103FAC+8r
 off_104038	DCD dword_10B3AC	; DATA XREF: sub_103FAC+30r
 dword_10403C	DCD 0x10A7CB		; DATA XREF: sub_103FAC+38r
 dword_104040	DCD 0x10A8EB		; DATA XREF: sub_103FAC+5Cr
@@ -5983,7 +6072,7 @@ dword_104040	DCD 0x10A8EB		; DATA XREF: sub_103FAC+5Cr
 sub_104044				; CODE XREF: sub_101278+D0p
 		STMFD	SP!, {R3-R7,LR}
 		LDR	R3, =dword_1085F4
-		LDR	R5, =dword_10B394
+		LDR	R5, =(dword_10AFC4+0x3D0)
 		LDR	R4, [R3,#(dword_1085F8 - 0x1085F4)]
 		BL	sub_10593C
 		MOV	R1, #0
@@ -6050,7 +6139,7 @@ loc_104120				; CODE XREF: sub_104044+CCj
 		ADD	R5, R4,	R3
 		MOVHI	R3, #1
 		STRHI	R3, [R4,#4]
-		LDR	R4, =dword_10B2C4
+		LDR	R4, =(dword_10AFC4+0x300)
 		MOV	R1, #0
 		MOV	R2, #0x114
 		LDR	R0, [R6]
@@ -6077,7 +6166,7 @@ loc_104120				; CODE XREF: sub_104044+CCj
 
 ; ---------------------------------------------------------------------------
 off_104194	DCD dword_1085F4	; DATA XREF: sub_104044+4r
-off_104198	DCD dword_10B394	; DATA XREF: sub_104044+8r
+off_104198	DCD dword_10AFC4+0x3D0	; DATA XREF: sub_104044+8r
 dword_10419C	DCD 0x10A4DD		; DATA XREF: sub_104044+38r
 off_1041A0	DCD fsUserHandle	; DATA XREF: sub_104044+44r
 off_1041A4	DCD aFsuser_openarc	; DATA XREF: sub_104044+58r
@@ -6095,7 +6184,7 @@ off_1041B8	DCD aAllocMemoryFor	; DATA XREF: sub_104044+ACr
 					; "alloc memory for arm11bin failed\n"
 off_1041BC	DCD aLoadArm11binFa	; DATA XREF: sub_104044+D0r
 					; "load arm11bin failed\n"
-off_1041C0	DCD dword_10B2C4	; DATA XREF: sub_104044+F4r
+off_1041C0	DCD dword_10AFC4+0x300	; DATA XREF: sub_104044+F4r
 off_1041C4	DCD aHome		; DATA XREF: sub_104044+110r
 					; "home"
 off_1041C8	DCD dword_10B3B0	; DATA XREF: sub_104044+11Cr
@@ -6690,37 +6779,56 @@ dword_1047E0	DCD 0x1020		; DATA XREF: sub_104638+D0r
 dword_1047E4	DCD 0x10AA35		; DATA XREF: sub_104638+F8r
 dword_1047E8	DCD 0xFFFF8001		; DATA XREF: sub_104638+128r
 dword_1047EC	DCD 0x10AA51		; DATA XREF: sub_104638+140r
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_1047F0
+
+g		= -0x1078
+b		= -0x1074
+var_1070	= -0x1070
+var_1068	= -0x1068
+openflags	= -0x105C
+attributes	= -0x1058
+handle_out	= -0x1050
+out		= -0x104C
+var_1044	= -0x1044
+var_1040	= -0x1040
+var_103C	= -0x103C
+var_1038	= -0x1038
+var_1018	= -0x1018
+
 		STMFD	SP!, {R4-R7,LR}
 		SUB	SP, SP,	#0x1040
-		SUB	SP, SP,	#0x24
+		SUB	SP, SP,	#0x24	; archive
 		MOV	R4, #0
 		MOV	R3, #3
 		MOV	R6, R0
 		MOV	R0, R1
 		MOV	R5, R1
-		STRB	R3, [SP,#0x34]
-		STR	R4, [SP,#0x28]
-		STR	R4, [SP,#0x2C]
+		STRB	R3, [SP,#0x1078+var_1044]
+		STR	R4, [SP,#0x1078+handle_out]
+		STR	R4, [SP,#0x1078+out]
 		BL	strlen
-		ADD	R2, SP,	#0x34
-		STR	R5, [SP,#0x3C]
-		ADD	R3, SP,	#0x10
+		ADD	R2, SP,	#0x1078+var_1044
+		STR	R5, [SP,#0x1078+var_103C]
+		ADD	R3, SP,	#0x1078+var_1068
 		LDR	R12, =sdmcArchive
 		ADD	R0, R0,	#1
-		STR	R0, [SP,#0x38]
+		STR	R0, [SP,#0x1078+var_1040]
 		LDMIA	R2, {R0-R2}
 		STMIA	R3, {R0-R2}
 		MOV	R3, #7
-		STR	R3, [SP,#0x1C]
+		STR	R3, [SP,#0x1078+openflags] ; openflags
 		ADD	R3, R12, #8
-		STR	R4, [SP,#0x20]
+		STR	R4, [SP,#0x1078+attributes] ; attributes
 		LDMIA	R3, {R0-R3}
 		STMEA	SP, {R0-R3}
 		LDR	R1, =fsUserHandle
 		LDMIA	R12, {R2,R3}
-		LDR	R0, [R1]
-		ADD	R1, SP,	#0x2C
+		LDR	R0, [R1]	; handle
+		ADD	R1, SP,	#0x1078+out ; out
 		BL	FSUSER_OpenFileDirectly
 		SUBS	R5, R0,	#0
 		LDRNE	R0, =aOpenfileFailed ; "openFile failed: %08x"
@@ -6728,11 +6836,11 @@ dword_1047EC	DCD 0x10AA51		; DATA XREF: sub_104638+140r
 		MOVNE	R2, R4
 		BNE	loc_104928
 		LDR	R0, =0x10AA6F
-		LDR	R1, [SP,#0x2C]
+		LDR	R1, [SP,#0x1078+out]
 		MOV	R2, R5
 		BL	showDbg
-		ADD	R0, SP,	#0x28
-		MOV	R1, R6
+		ADD	R0, SP,	#0x1078+handle_out ; handle_out
+		MOV	R1, R6		; pid
 		BL	svc_debugActiveProcess
 		SUBS	R4, R0,	#0
 		LDRNE	R0, =0x10AA7B
@@ -6740,83 +6848,85 @@ dword_1047EC	DCD 0x10AA51		; DATA XREF: sub_104638+140r
 		MOVNE	R2, R5
 		BNE	loc_104928
 		LDR	R0, =0x10AA9B
-		LDR	R1, [SP,#0x28]
+		LDR	R1, [SP,#0x1078+handle_out]
 		MOV	R2, R4
 		BL	showDbg
-		ADD	R3, SP,	#0x60
-		ADD	R5, SP,	#0x40
+		ADD	R3, SP,	#0x1078+var_1018
+		ADD	R5, SP,	#0x1078+var_1038
 		SUB	R7, R3,	#0x30
 
-loc_1048CC				; CODE XREF: ROM:00104968j
+loc_1048CC				; CODE XREF: sub_1047F0+178j
 		ADD	R6, R4,	#0x100000
 		MOV	R0, R5
 		LDR	R1, =(aOutaddr08xAddr+0xF)
 		MOV	R2, R6
 		BL	sub_107B90
-		MOV	R1, #0xA
+		MOV	R1, #0xA	; x
 		MOV	R3, #0
-		MOV	R2, R1
-		STR	R3, [SP]
-		STR	R3, [SP,#4]
-		MOV	R0, R5
-		MOV	R3, #0xFF
+		MOV	R2, R1		; y
+		STR	R3, [SP,#0x1078+g] ; g
+		STR	R3, [SP,#0x1078+b] ; b
+		MOV	R0, R5		; s
+		MOV	R3, #0xFF	; r
 		BL	print
 		BL	sub_107188
-		MOV	R2, R6
-		MOV	R0, R5
-		LDR	R1, [SP,#0x28]
-		MOV	R3, #0x1000
+		MOV	R2, R6		; addr
+		MOV	R0, R5		; buffer
+		LDR	R1, [SP,#0x1078+handle_out] ; debug
+		MOV	R3, #0x1000	; size
 		BL	svcReadProcessMemory
 		SUBS	R2, R0,	#0
 		BEQ	loc_104940
 		LDR	R0, =aReadmemoryAddr ; "readmemory addr = %08x, ret = %08x"
 		MOV	R1, R6
 
-loc_104928				; CODE XREF: ROM:0010487Cj
-					; ROM:001048ACj
+loc_104928				; CODE XREF: sub_1047F0+8Cj
+					; sub_1047F0+BCj
 		BL	showDbg
-		LDR	R0, [SP,#0x28]
+		LDR	R0, [SP,#0x1078+handle_out] ; handle
 		CMP	R0, #0
 		BEQ	loc_10496C
 		BL	svcCloseHandle
 		B	loc_10496C
 ; ---------------------------------------------------------------------------
 
-loc_104940				; CODE XREF: ROM:0010491Cj
+loc_104940				; CODE XREF: sub_1047F0+12Cj
 		MOV	R3, #0x1000
-		STR	R3, [SP,#4]
-		STR	R2, [SP,#8]
-		STR	R5, [SP]
-		MOV	R2, R4
-		LDR	R0, [SP,#0x2C]
-		MOV	R1, R7
+		STR	R3, [SP,#0x1078+b]
+		STR	R2, [SP,#0x1078+var_1070]
+		STR	R5, [SP,#0x1078+g]
+		MOV	R2, R4		; flushFlags
+		LDR	R0, [SP,#0x1078+out] ; data
+		MOV	R1, R7		; size
 		MOV	R3, #0
 		BL	FSFILE_Write
 		ADD	R4, R4,	#0x1000
 		B	loc_1048CC
 ; ---------------------------------------------------------------------------
 
-loc_10496C				; CODE XREF: ROM:00104934j
-					; ROM:0010493Cj
-		LDR	R0, [SP,#0x2C]
+loc_10496C				; CODE XREF: sub_1047F0+144j
+					; sub_1047F0+14Cj
+		LDR	R0, [SP,#0x1078+out] ; handle
 		CMP	R0, #0
 		BEQ	loc_10497C
 		BL	svcCloseHandle
 
-loc_10497C				; CODE XREF: ROM:00104974j
+loc_10497C				; CODE XREF: sub_1047F0+184j
 		ADD	SP, SP,	#0x1040
 		ADD	SP, SP,	#0x24
 		LDMFD	SP!, {R4-R7,PC}
+; End of function sub_1047F0
+
 ; ---------------------------------------------------------------------------
-off_104988	DCD sdmcArchive		; DATA XREF: ROM:0010482Cr
-off_10498C	DCD fsUserHandle	; DATA XREF: ROM:00104858r
-off_104990	DCD aOpenfileFailed	; DATA XREF: ROM:00104870r
+off_104988	DCD sdmcArchive		; DATA XREF: sub_1047F0+3Cr
+off_10498C	DCD fsUserHandle	; DATA XREF: sub_1047F0+68r
+off_104990	DCD aOpenfileFailed	; DATA XREF: sub_1047F0+80r
 					; "openFile failed: %08x"
-dword_104994	DCD 0x10AA6F		; DATA XREF: ROM:00104880r
-dword_104998	DCD 0x10AA7B		; DATA XREF: ROM:001048A0r
-dword_10499C	DCD 0x10AA9B		; DATA XREF: ROM:001048B0r
-off_1049A0	DCD aOutaddr08xAddr+0xF	; DATA XREF: ROM:001048D4r
-off_1049A4	DCD aReadmemoryAddr	; DATA XREF: ROM:00104920r
+dword_104994	DCD 0x10AA6F		; DATA XREF: sub_1047F0+90r
+dword_104998	DCD 0x10AA7B		; DATA XREF: sub_1047F0+B0r
+dword_10499C	DCD 0x10AA9B		; DATA XREF: sub_1047F0+C0r
+off_1049A0	DCD aOutaddr08xAddr+0xF	; DATA XREF: sub_1047F0+E4r
+off_1049A4	DCD aReadmemoryAddr	; DATA XREF: sub_1047F0+130r
 					; "readmemory addr = %08x, ret = %08x"
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -8086,7 +8196,7 @@ off_1056BC	DCD aTop_04d_bmp	; DATA XREF: sub_105674+10r
 
 
 sub_1056C0				; CODE XREF: sub_101278+120p
-					; ROM:001058A0p
+					; sub_105864+3Cp
 
 var_78		= -0x78
 var_74		= -0x74
@@ -8211,18 +8321,24 @@ off_105854	DCD aTop_04d_bmp	; DATA XREF: sub_1056C0+D4r
 					; "/top_%04d.bmp"
 dword_105858	DCD 0x10AC05		; DATA XREF: sub_1056C0+140r
 dword_10585C	DCD 0x1FF00FF		; DATA XREF: sub_1056C0+164r
-; ---------------------------------------------------------------------------
-
-loc_105860				; DATA XREF: sub_1058C8+10o
+dword_105860	DCD 0xE3A03000		; DATA XREF: sub_1058C8+10o
 					; ROM:off_105924o
-		MOV	R3, #0
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_105864
+
+var_C		= -0xC
+var_4		= -4
+
 		STMFD	SP!, {R0-R2,LR}
 
-loc_105868				; CODE XREF: ROM:0010587Cj
-		STR	R3, [SP,#4]
-		LDR	R3, [SP,#4]
+loc_105868				; CODE XREF: sub_105864+18j
+		STR	R3, [SP,#0x10+var_C]
+		LDR	R3, [SP,#0x10+var_C]
 		CMP	R3, #0x1000000
-		LDRCC	R3, [SP,#4]
+		LDRCC	R3, [SP,#0x10+var_C]
 		ADDCC	R3, R3,	#1
 		BCC	loc_105868
 		MOV	R1, #0
@@ -8230,7 +8346,7 @@ loc_105868				; CODE XREF: ROM:0010587Cj
 		MOV	R3, R1
 		MOV	R0, #2
 		BL	sub_10736C
-		LDR	R0, =0x5F5E100
+		LDR	R0, =0x5F5E100	; ns
 		MOV	R1, #0
 		BL	svcSleepThread
 		BL	sub_1056C0
@@ -8241,9 +8357,12 @@ loc_105868				; CODE XREF: ROM:0010587Cj
 		BL	sub_10736C
 		MOV	R0, #1
 		ADD	SP, SP,	#0xC
-		LDR	PC, [SP],#4
+		LDR	PC, [SP+4+var_4],#4
+; End of function sub_105864
+
 ; ---------------------------------------------------------------------------
-dword_1058C4	DCD 0x5F5E100		; DATA XREF: ROM:00105894r
+; s64 dword_1058C4
+dword_1058C4	DCD 0x5F5E100		; DATA XREF: sub_105864+30r
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -8253,7 +8372,7 @@ sub_1058C8				; CODE XREF: sub_101278+D4p
 		LDR	R0, =0x10AC13
 		LDR	R4, =fsUserHandle
 		BL	sub_101A14
-		LDR	R2, =loc_105860
+		LDR	R2, =dword_105860
 		LDR	R1, =0x10AC33
 		MOV	R0, #1
 		BL	sub_10375C
@@ -8275,7 +8394,7 @@ sub_1058C8				; CODE XREF: sub_101278+D4p
 ; ---------------------------------------------------------------------------
 dword_10591C	DCD 0x10AC13		; DATA XREF: sub_1058C8+4r
 off_105920	DCD fsUserHandle	; DATA XREF: sub_1058C8+8r
-off_105924	DCD loc_105860		; DATA XREF: sub_1058C8+10r
+off_105924	DCD dword_105860	; DATA XREF: sub_1058C8+10r
 dword_105928	DCD 0x10AC33		; DATA XREF: sub_1058C8+14r
 off_10592C	DCD aFsUser		; DATA XREF: sub_1058C8+24r
 					; "fs:USER"
@@ -8306,7 +8425,7 @@ sub_10593C				; CODE XREF: sub_104044+10p
 		STR	R2, [R3,#0xC0]
 		LDR	R2, =sub_10736C
 		STR	R2, [R3,#0xC4]
-		LDR	R2, =loc_103488
+		LDR	R2, =sub_103488
 		STR	R2, [R3,#0xC8]
 		BX	LR
 ; End of function sub_10593C
@@ -8321,7 +8440,7 @@ off_1059A4	DCD sub_1033D0		; DATA XREF: sub_10593C+28r
 off_1059A8	DCD __udiv_w_sdiv	; DATA XREF: sub_10593C+30r
 off_1059AC	DCD sub_107B90		; DATA XREF: sub_10593C+38r
 off_1059B0	DCD sub_10736C		; DATA XREF: sub_10593C+40r
-off_1059B4	DCD loc_103488		; DATA XREF: sub_10593C+48r
+off_1059B4	DCD sub_103488		; DATA XREF: sub_10593C+48r
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -8359,7 +8478,7 @@ sub_1059F4				; CODE XREF: sub_105A80+54p
 		STMFD	SP!, {R4-R6,LR}
 		MOV	R6, R1
 		MOV	R5, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x10044
 		STMIA	R0, {R3,R6}
 		MOV	R3, #0x20
@@ -8381,7 +8500,7 @@ dword_105A3C	DCD 0x10044		; DATA XREF: sub_1059F4+10r
 off_105A40	DCD dword_10B490	; DATA XREF: sub_1059F4+28r
 ; ---------------------------------------------------------------------------
 		STMFD	SP!, {R3-R5,LR}
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R5, =dword_10B490
 		MOV	R3, #0x190000
 		STR	R3, [R0]
@@ -8463,7 +8582,7 @@ sub_105AF8				; CODE XREF: sub_102F98+14p
 		MOV	R5, R2
 		MOV	R6, R1
 		MOV	R7, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x200C2
 		STR	R5, [R0,#0xC]
 		LDR	R5, =dword_10B490
@@ -8501,7 +8620,7 @@ sub_105B68				; CODE XREF: sub_1021FC+28p
 					; sub_1021FC+38p ...
 		STMFD	SP!, {R3-R5,LR}
 		MOV	R5, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0xB0042
 		STMIA	R0, {R3,R5}
 		LDR	R5, =dword_10B490
@@ -8528,11 +8647,15 @@ loc_105BB0				; CODE XREF: sub_105B68+3Cj
 ; ---------------------------------------------------------------------------
 dword_105BC0	DCD 0xB0042		; DATA XREF: sub_105B68+Cr
 off_105BC4	DCD dword_10B490	; DATA XREF: sub_105B68+14r
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_105BC8
 		STMFD	SP!, {R4-R6,LR}
 		MOV	R5, R1
 		MOV	R6, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0xC0082
 		STR	R5, [R0,#8]
 		LDR	R5, =dword_10B490
@@ -8540,7 +8663,7 @@ off_105BC4	DCD dword_10B490	; DATA XREF: sub_105B68+14r
 		MOV	R3, #0x20
 		STR	R3, [R0,#0xC]
 		MOV	R4, R0
-		LDR	R0, [R5]
+		LDR	R0, [R5]	; session
 		BL	svcSendSyncRequest
 		CMP	R0, #0
 		LDMNEFD	SP!, {R4-R6,PC}
@@ -8550,14 +8673,16 @@ off_105BC4	DCD dword_10B490	; DATA XREF: sub_105B68+14r
 		LDR	R0, [R4,#8]
 		BL	sub_1059B8
 
-loc_105C18				; CODE XREF: ROM:00105C0Cj
+loc_105C18				; CODE XREF: sub_105BC8+44j
 		STR	R0, [R5,#4]
 		MOVS	R0, R0
 		MOVNE	R0, #0xFFFFFFFF
 		LDMFD	SP!, {R4-R6,PC}
+; End of function sub_105BC8
+
 ; ---------------------------------------------------------------------------
-dword_105C28	DCD 0xC0082		; DATA XREF: ROM:00105BD8r
-off_105C2C	DCD dword_10B490	; DATA XREF: ROM:00105BE0r
+dword_105C28	DCD 0xC0082		; DATA XREF: sub_105BC8+10r
+off_105C2C	DCD dword_10B490	; DATA XREF: sub_105BC8+18r
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -8566,7 +8691,7 @@ sub_105C30				; CODE XREF: sub_102F98+7Cp
 		STMFD	SP!, {R4-R6,LR}
 		MOV	R5, R1
 		MOV	R6, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x30082
 		STR	R5, [R0,#8]
 		LDR	R5, =dword_10B490
@@ -8608,7 +8733,7 @@ var_43		= -0x43
 		MOV	R6, R0
 		MOV	R8, R1
 		MOV	R9, R2
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		ADD	R7, SP,	#0x48+var_44
 		MOV	R4, #0x1C
 		MOV	R1, #0
@@ -8693,7 +8818,7 @@ var_3B		= -0x3B
 		MOV	R6, R2
 		MOV	R8, R1
 		MOV	R9, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		ADD	R7, SP,	#0x40+var_3C
 		MOV	R1, #0
 		MOV	R2, #0x1C
@@ -8748,14 +8873,22 @@ loc_105E5C				; CODE XREF: sub_105D9C+54j
 ; ---------------------------------------------------------------------------
 off_105E64	DCD dword_10B490	; DATA XREF: sub_105D9C+44r
 dword_105E68	DCD 0x50084		; DATA XREF: sub_105D9C+70r
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_105E6C
+
+var_3C		= -0x3C
+var_3B		= -0x3B
+
 		STMFD	SP!, {R4-R10,LR}
 		SUB	SP, SP,	#0x20
 		MOV	R9, R1
 		MOV	R8, R2
 		MOV	R10, R0
-		BL	getThreadCommandBuffer
-		ADD	R7, SP,	#4
+		BL	svcGetThreadCommandBuffer
+		ADD	R7, SP,	#0x40+var_3C
 		MOV	R1, #0
 		MOV	R2, #0x1C
 		LDR	R6, =dword_10B490
@@ -8774,8 +8907,8 @@ dword_105E68	DCD 0x50084		; DATA XREF: sub_105D9C+70r
 		SUB	R2, R5,	#2
 		ADD	R1, R9,	#2
 		ADD	R0, R7,	#2
-		STRB	R5, [SP,#4]
-		STRB	R3, [SP,#5]
+		STRB	R5, [SP,#0x40+var_3C]
+		STRB	R3, [SP,#0x40+var_3B]
 		BL	memcpy
 		LDR	R3, =0x60084
 		MOV	R5, R5,LSL#14
@@ -8786,7 +8919,7 @@ dword_105E68	DCD 0x50084		; DATA XREF: sub_105D9C+70r
 		STR	R3, [R4,#0xC]
 		STR	R5, [R4,#0x14]
 		STR	R7, [R4,#0x18]
-		LDR	R0, [R6]
+		LDR	R0, [R6]	; session
 		BL	svcSendSyncRequest
 		CMP	R0, #0
 		BNE	loc_105F2C
@@ -8796,17 +8929,19 @@ dword_105E68	DCD 0x50084		; DATA XREF: sub_105D9C+70r
 		LDR	R0, [R4,#8]
 		BL	sub_1059B8
 
-loc_105F24				; CODE XREF: ROM:00105F18j
+loc_105F24				; CODE XREF: sub_105E6C+ACj
 		STR	R0, [R6,#4]
 		MOV	R0, R0,ASR#31
 
-loc_105F2C				; CODE XREF: ROM:00105EC0j
-					; ROM:00105F0Cj
+loc_105F2C				; CODE XREF: sub_105E6C+54j
+					; sub_105E6C+A0j
 		ADD	SP, SP,	#0x20
 		LDMFD	SP!, {R4-R10,PC}
+; End of function sub_105E6C
+
 ; ---------------------------------------------------------------------------
-off_105F34	DCD dword_10B490	; DATA XREF: ROM:00105E90r
-dword_105F38	DCD 0x60084		; DATA XREF: ROM:00105EDCr
+off_105F34	DCD dword_10B490	; DATA XREF: sub_105E6C+24r
+dword_105F38	DCD 0x60084		; DATA XREF: sub_105E6C+70r
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -8826,7 +8961,7 @@ arg_4		=  4
 		MOV	R11, R0
 		LDR	R6, [SP,#0x48+arg_0]
 		LDR	R8, [SP,#0x48+arg_4]
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		ADD	R7, SP,	#0x48+var_44
 		MOV	R1, #0
 		MOV	R2, #0x1C
@@ -8924,7 +9059,7 @@ arg_4		=  4
 		STR	R1, [SP,#0x58+var_4C]
 		LDR	R7, [SP,#0x58+arg_0]
 		LDR	R9, [SP,#0x58+arg_4]
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		ADD	R8, SP,	#0x58+var_44
 		CMP	R7, #0
 		MOV	R1, #0
@@ -9029,7 +9164,7 @@ arg_4		=  4
 		STR	R3, [SP,#0x50+var_4C]
 		MOV	R7, R2
 		MOV	R11, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		ADD	R9, SP,	#0x50+var_44
 		MOV	R1, #0
 		MOV	R2, #0x1C
@@ -9125,7 +9260,7 @@ arg_4		=  4
 		STR	R3, [SP,#0x50+var_4C]
 		MOV	R7, R2
 		MOV	R11, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		ADD	R8, SP,	#0x50+var_44
 		MOV	R1, #0
 		MOV	R2, #0x1C
@@ -9292,14 +9427,21 @@ var_4		= -4
 		LDR	PC, [SP+4+var_4],#4
 ; End of function sub_106448
 
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_106464
+
+arg_0		=  0
+
 		STMFD	SP!, {R3-R9,LR}
 		MOV	R8, R1
 		MOV	R7, R2
 		MOV	R5, R3
 		MOV	R9, R0
-		LDR	R6, [SP,#0x20]
-		BL	getThreadCommandBuffer
+		LDR	R6, [SP,#0x20+arg_0]
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x110102
 		LDR	R2, [R6]
 		STR	R7, [R0,#0xC]
@@ -9316,7 +9458,7 @@ var_4		= -4
 		LDR	R8, [R0,#0x100]
 		MOV	R4, R0
 		STR	R2, [R0,#0x100]
-		LDR	R0, [R5]
+		LDR	R0, [R5]	; session
 		BL	svcSendSyncRequest
 		CMP	R0, #0
 		LDMNEFD	SP!, {R3-R9,PC}
@@ -9330,32 +9472,41 @@ var_4		= -4
 		CMP	R0, #0
 		BGE	loc_106500
 
-loc_1064F4				; CODE XREF: ROM:loc_10650Cj
+loc_1064F4				; CODE XREF: sub_106464:loc_10650Cj
 		STR	R0, [R5,#4]
 		MOV	R0, #0xFFFFFFFF
 		LDMFD	SP!, {R3-R9,PC}
 ; ---------------------------------------------------------------------------
 
-loc_106500				; CODE XREF: ROM:001064F0j
+loc_106500				; CODE XREF: sub_106464+8Cj
 		LDREQ	R3, [R4,#0xC]
 		STREQ	R3, [R6]
 		LDMFD	SP!, {R3-R9,PC}
 ; ---------------------------------------------------------------------------
 
-loc_10650C				; CODE XREF: ROM:001064E0j
+loc_10650C				; CODE XREF: sub_106464+7Cj
 		BLT	loc_1064F4
 		LDMFD	SP!, {R3-R9,PC}
+; End of function sub_106464
+
 ; ---------------------------------------------------------------------------
-dword_106514	DCD 0x110102		; DATA XREF: ROM:00106480r
-off_106518	DCD dword_10B490	; DATA XREF: ROM:00106494r
-; ---------------------------------------------------------------------------
+dword_106514	DCD 0x110102		; DATA XREF: sub_106464+1Cr
+off_106518	DCD dword_10B490	; DATA XREF: sub_106464+30r
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_10651C
+
+arg_0		=  0
+
 		STMFD	SP!, {R3-R9,LR}
 		MOV	R8, R1
 		MOV	R7, R2
 		MOV	R6, R3
-		LDR	R5, [SP,#0x20]
+		LDR	R5, [SP,#0x20+arg_0]
 		MOV	R9, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x120104
 		STR	R5, [R0,#0x10]
 		MOV	R5, R5,LSL#14
@@ -9370,7 +9521,7 @@ off_106518	DCD dword_10B490	; DATA XREF: ROM:00106494r
 		STR	R3, [R0,#0x14]
 		STR	R6, [R0,#0x20]
 		MOV	R4, R0
-		LDR	R0, [R5]
+		LDR	R0, [R5]	; session
 		BL	svcSendSyncRequest
 		CMP	R0, #0
 		LDMNEFD	SP!, {R3-R9,PC}
@@ -9380,54 +9531,66 @@ off_106518	DCD dword_10B490	; DATA XREF: ROM:00106494r
 		LDR	R0, [R4,#8]
 		BL	sub_1059B8
 
-loc_106594				; CODE XREF: ROM:00106588j
+loc_106594				; CODE XREF: sub_10651C+6Cj
 		CMP	R0, #0
 		STRLT	R0, [R5,#4]
 		MOVLT	R0, #0xFFFFFFFF
 		LDMFD	SP!, {R3-R9,PC}
+; End of function sub_10651C
+
 ; ---------------------------------------------------------------------------
-dword_1065A4	DCD 0x120104		; DATA XREF: ROM:00106538r
-off_1065A8	DCD dword_10B490	; DATA XREF: ROM:00106550r
-; ---------------------------------------------------------------------------
+dword_1065A4	DCD 0x120104		; DATA XREF: sub_10651C+1Cr
+off_1065A8	DCD dword_10B490	; DATA XREF: sub_10651C+34r
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_1065AC
+
+var_24		= -0x24
+varg_r1		= -0xC
+varg_r2		= -8
+varg_r3		= -4
+
 		STMFD	SP!, {R1-R3}
 		STMFD	SP!, {R0,R1,R4-R7,LR}
 		MOV	R7, R0
-		LDR	R6, [SP,#0x1C]
-		BL	getThreadCommandBuffer
+		LDR	R6, [SP,#0x28+varg_r1]
+		BL	svcGetThreadCommandBuffer
 		SUB	R2, R6,	#3
-		ADD	R3, SP,	#0x20
+		ADD	R3, SP,	#0x28+varg_r2
 		CMP	R2, #1
-		STR	R3, [SP,#4]
+		STR	R3, [SP,#0x28+var_24]
 		LDR	R5, =dword_10B490
 		BLS	loc_1065E4
 
-loc_1065D8				; CODE XREF: ROM:00106604j
+loc_1065D8				; CODE XREF: sub_1065AC+58j
 		MOV	R3, #0xFFFFFFEA
 		STR	R3, [R5,#(dword_10B494 - 0x10B490)]
 		B	loc_106658
 ; ---------------------------------------------------------------------------
 
-loc_1065E4				; CODE XREF: ROM:001065D4j
+loc_1065E4				; CODE XREF: sub_1065AC+28j
 		CMP	R6, #4
 		MOV	R4, R0
 		MOVNE	R3, #0
 		BNE	loc_106610
 		LDR	R3, [R3]
-		ADD	R2, SP,	#0x24
-		STR	R2, [SP,#4]
+		ADD	R2, SP,	#0x28+varg_r3
+		STR	R2, [SP,#0x28+var_24]
 		BICS	R2, R3,	#0x4000
 		BNE	loc_1065D8
 		CMP	R3, #0x4000
 		MOVEQ	R3, #4
 
-loc_106610				; CODE XREF: ROM:001065F0j
+loc_106610				; CODE XREF: sub_1065AC+44j
 		LDR	R2, =0x1300C2
 		STR	R3, [R4,#0xC]
 		MOV	R3, #0x20
 		STMIA	R4, {R2,R7}
 		STR	R6, [R4,#8]
 		STR	R3, [R4,#0x10]
-		LDR	R0, [R5]
+		LDR	R0, [R5]	; session
 		BL	svcSendSyncRequest
 		CMP	R0, #0
 		BNE	loc_10665C
@@ -9437,34 +9600,40 @@ loc_106610				; CODE XREF: ROM:001065F0j
 		LDR	R0, [R4,#8]
 		BL	sub_1059B8
 
-loc_10664C				; CODE XREF: ROM:00106640j
+loc_10664C				; CODE XREF: sub_1065AC+94j
 		CMP	R0, #0
 		BGE	loc_10665C
 		STR	R0, [R5,#4]
 
-loc_106658				; CODE XREF: ROM:001065E0j
+loc_106658				; CODE XREF: sub_1065AC+34j
 		MOV	R0, #0xFFFFFFFF
 
-loc_10665C				; CODE XREF: ROM:00106634j
-					; ROM:00106650j
+loc_10665C				; CODE XREF: sub_1065AC+88j
+					; sub_1065AC+A4j
 		ADD	SP, SP,	#8
 		LDMFD	SP!, {R4-R7,LR}
 		ADD	SP, SP,	#0xC
 		BX	LR
+; End of function sub_1065AC
+
 ; ---------------------------------------------------------------------------
-off_10666C	DCD dword_10B490	; DATA XREF: ROM:001065D0r
-dword_106670	DCD 0x1300C2		; DATA XREF: ROM:loc_106610r
-; ---------------------------------------------------------------------------
+off_10666C	DCD dword_10B490	; DATA XREF: sub_1065AC+24r
+dword_106670	DCD 0x1300C2		; DATA XREF: sub_1065AC:loc_106610r
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_106674
 		STMFD	SP!, {R3-R5,LR}
 		MOV	R5, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x150042
 		STMIA	R0, {R3,R5}
 		LDR	R5, =dword_10B490
 		MOV	R3, #0x20
 		STR	R3, [R0,#8]
 		MOV	R4, R0
-		LDR	R0, [R5]
+		LDR	R0, [R5]	; session
 		BL	svcSendSyncRequest
 		CMP	R0, #0
 		LDMNEFD	SP!, {R3-R5,PC}
@@ -9474,22 +9643,28 @@ dword_106670	DCD 0x1300C2		; DATA XREF: ROM:loc_106610r
 		LDR	R0, [R4,#8]
 		BL	sub_1059B8
 
-loc_1066BC				; CODE XREF: ROM:001066B0j
+loc_1066BC				; CODE XREF: sub_106674+3Cj
 		CMP	R0, #0
 		STRLT	R0, [R5,#4]
 		MOVLT	R0, #0xFFFFFFFF
 		LDMFD	SP!, {R3-R5,PC}
+; End of function sub_106674
+
 ; ---------------------------------------------------------------------------
-dword_1066CC	DCD 0x150042		; DATA XREF: ROM:00106680r
-off_1066D0	DCD dword_10B490	; DATA XREF: ROM:00106688r
-; ---------------------------------------------------------------------------
+dword_1066CC	DCD 0x150042		; DATA XREF: sub_106674+Cr
+off_1066D0	DCD dword_10B490	; DATA XREF: sub_106674+14r
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_1066D4
 		STMFD	SP!, {R4,LR}
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		MOV	R3, #0x160000
 		STR	R3, [R0]
 		LDR	R3, =dword_10B490
 		MOV	R4, R0
-		LDR	R0, [R3]
+		LDR	R0, [R3]	; session
 		BL	svcSendSyncRequest
 		CMP	R0, #0
 		LDMNEFD	SP!, {R4,PC}
@@ -9498,17 +9673,27 @@ off_1066D0	DCD dword_10B490	; DATA XREF: ROM:00106688r
 		LDREQ	R0, [R4,#8]
 		MOVNE	R0, R3
 		LDMFD	SP!, {R4,PC}
+; End of function sub_1066D4
+
 ; ---------------------------------------------------------------------------
-off_106710	DCD dword_10B490	; DATA XREF: ROM:001066E4r
-; ---------------------------------------------------------------------------
+off_106710	DCD dword_10B490	; DATA XREF: sub_1066D4+10r
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_106714
+
+var_3C		= -0x3C
+var_3B		= -0x3B
+
 		STMFD	SP!, {R4-R10,LR}
 		SUB	SP, SP,	#0x20
 		MOV	R5, R0
 		MOV	R6, R1
 		MOV	R7, R2
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x170082
-		ADD	R8, SP,	#4
+		ADD	R8, SP,	#0x40+var_3C
 		STMIA	R0, {R3,R5}
 		MOV	R3, #0x1C
 		STR	R3, [R0,#8]
@@ -9521,7 +9706,7 @@ off_106710	DCD dword_10B490	; DATA XREF: ROM:001066E4r
 		STR	R3, [R0,#0x100]
 		STR	R8, [R0,#0x104]
 		MOV	R4, R0
-		LDR	R0, [R5]
+		LDR	R0, [R5]	; session
 		BL	svcSendSyncRequest
 		CMP	R0, #0
 		BNE	loc_1067F0
@@ -9535,19 +9720,19 @@ off_106710	DCD dword_10B490	; DATA XREF: ROM:001066E4r
 		CMP	R0, #0
 		BGE	loc_1067A4
 
-loc_106798				; CODE XREF: ROM:loc_1067ECj
+loc_106798				; CODE XREF: sub_106714:loc_1067ECj
 		STR	R0, [R5,#(dword_10B494 - 0x10B490)]
 		MOV	R0, #0xFFFFFFFF
 		B	loc_1067F0
 ; ---------------------------------------------------------------------------
 
-loc_1067A4				; CODE XREF: ROM:00106794j
+loc_1067A4				; CODE XREF: sub_106714+80j
 		BNE	loc_1067F0
-		LDRB	R3, [SP,#5]
+		LDRB	R3, [SP,#0x40+var_3B]
 		LDR	R2, [R7]
 		MOV	R1, #0
 		STRH	R3, [R6]
-		LDRB	R3, [SP,#4]
+		LDRB	R3, [SP,#0x40+var_3C]
 		MOV	R0, R6
 		CMP	R2, R3
 		STRGT	R3, [R7]
@@ -9562,26 +9747,36 @@ loc_1067A4				; CODE XREF: ROM:00106794j
 		B	loc_1067F0
 ; ---------------------------------------------------------------------------
 
-loc_1067EC				; CODE XREF: ROM:00106784j
+loc_1067EC				; CODE XREF: sub_106714+70j
 		BLT	loc_106798
 
-loc_1067F0				; CODE XREF: ROM:00106770j
-					; ROM:001067A0j ...
+loc_1067F0				; CODE XREF: sub_106714+5Cj
+					; sub_106714+8Cj ...
 		ADD	SP, SP,	#0x20
 		LDMFD	SP!, {R4-R10,PC}
+; End of function sub_106714
+
 ; ---------------------------------------------------------------------------
-dword_1067F8	DCD 0x170082		; DATA XREF: ROM:0010672Cr
-off_1067FC	DCD dword_10B490	; DATA XREF: ROM:00106740r
-dword_106800	DCD 0x70002		; DATA XREF: ROM:0010674Cr
-; ---------------------------------------------------------------------------
+dword_1067F8	DCD 0x170082		; DATA XREF: sub_106714+18r
+off_1067FC	DCD dword_10B490	; DATA XREF: sub_106714+2Cr
+dword_106800	DCD 0x70002		; DATA XREF: sub_106714+38r
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_106804
+
+var_3C		= -0x3C
+var_3B		= -0x3B
+
 		STMFD	SP!, {R4-R10,LR}
 		SUB	SP, SP,	#0x20
 		MOV	R5, R0
 		MOV	R6, R1
 		MOV	R7, R2
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x180082
-		ADD	R8, SP,	#4
+		ADD	R8, SP,	#0x40+var_3C
 		STMIA	R0, {R3,R5}
 		MOV	R3, #0x1C
 		STR	R3, [R0,#8]
@@ -9594,7 +9789,7 @@ dword_106800	DCD 0x70002		; DATA XREF: ROM:0010674Cr
 		STR	R3, [R0,#0x100]
 		STR	R8, [R0,#0x104]
 		MOV	R4, R0
-		LDR	R0, [R5]
+		LDR	R0, [R5]	; session
 		BL	svcSendSyncRequest
 		CMP	R0, #0
 		BNE	loc_1068E0
@@ -9608,19 +9803,19 @@ dword_106800	DCD 0x70002		; DATA XREF: ROM:0010674Cr
 		CMP	R0, #0
 		BGE	loc_106894
 
-loc_106888				; CODE XREF: ROM:loc_1068DCj
+loc_106888				; CODE XREF: sub_106804:loc_1068DCj
 		STR	R0, [R5,#(dword_10B494 - 0x10B490)]
 		MOV	R0, #0xFFFFFFFF
 		B	loc_1068E0
 ; ---------------------------------------------------------------------------
 
-loc_106894				; CODE XREF: ROM:00106884j
+loc_106894				; CODE XREF: sub_106804+80j
 		BNE	loc_1068E0
-		LDRB	R3, [SP,#5]
+		LDRB	R3, [SP,#0x40+var_3B]
 		LDR	R2, [R7]
 		MOV	R1, #0
 		STRH	R3, [R6]
-		LDRB	R3, [SP,#4]
+		LDRB	R3, [SP,#0x40+var_3C]
 		MOV	R0, R6
 		CMP	R2, R3
 		STRGT	R3, [R7]
@@ -9635,17 +9830,19 @@ loc_106894				; CODE XREF: ROM:00106884j
 		B	loc_1068E0
 ; ---------------------------------------------------------------------------
 
-loc_1068DC				; CODE XREF: ROM:00106874j
+loc_1068DC				; CODE XREF: sub_106804+70j
 		BLT	loc_106888
 
-loc_1068E0				; CODE XREF: ROM:00106860j
-					; ROM:00106890j ...
+loc_1068E0				; CODE XREF: sub_106804+5Cj
+					; sub_106804+8Cj ...
 		ADD	SP, SP,	#0x20
 		LDMFD	SP!, {R4-R10,PC}
+; End of function sub_106804
+
 ; ---------------------------------------------------------------------------
-dword_1068E8	DCD 0x180082		; DATA XREF: ROM:0010681Cr
-off_1068EC	DCD dword_10B490	; DATA XREF: ROM:00106830r
-dword_1068F0	DCD 0x70002		; DATA XREF: ROM:0010683Cr
+dword_1068E8	DCD 0x180082		; DATA XREF: sub_106804+18r
+off_1068EC	DCD dword_10B490	; DATA XREF: sub_106804+2Cr
+dword_1068F0	DCD 0x70002		; DATA XREF: sub_106804+38r
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -9678,7 +9875,7 @@ srv_RegisterClient			; CODE XREF: initSrv+20p
 		CMP	R0, #0
 		LDR	R5, =srvHandle
 		MOVNE	R5, R0
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R2, =0x10002
 		MOV	R3, #0x20
 		MOV	R4, R0
@@ -9745,7 +9942,7 @@ srv_getServiceHandle			; CODE XREF: ACU_WaitInternetConnection+18p
 		ORRHI	R4, R3,	#1
 		CMP	R4, #0
 		BNE	loc_106A10
-		BL	getThreadCommandBuffer
+		BL	svcGetThreadCommandBuffer
 		LDR	R3, =0x50100
 		MOV	R1, R9
 		MOV	R5, R0
@@ -9775,12 +9972,12 @@ dword_106A1C	DCD 0x50100		; DATA XREF: srv_getServiceHandle+44r
 
 ; Attributes: library function
 
-getThreadCommandBuffer			; CODE XREF: ROM:00100524p
-					; ROM:00100578p ...
+svcGetThreadCommandBuffer		; CODE XREF: sub_100518+Cp
+					; sub_100568+10p ...
 		MRC	p15, 0,	R0,c13,c0, 3
 		ADD	R0, R0,	#0x80
 		BX	LR
-; End of function getThreadCommandBuffer
+; End of function svcGetThreadCommandBuffer
 
 ; [00000020 BYTES: COLLAPSED FUNCTION svcControlMemory.	PRESS KEYPAD CTRL-"+" TO EXPAND]
 ; [00000008 BYTES: COLLAPSED FUNCTION svcExitProcess. PRESS KEYPAD CTRL-"+" TO EXPAND]
@@ -10052,8 +10249,8 @@ var_4		= -4
 ; Attributes: library function
 
 ; s32 __stdcall	svcSendSyncRequest(Handle session)
-svcSendSyncRequest			; CODE XREF: ROM:0010054Cp
-					; ROM:001005A8p ...
+svcSendSyncRequest			; CODE XREF: sub_100518+34p
+					; sub_100568+40p ...
 		SVC	0x32
 		BX	LR
 ; End of function svcSendSyncRequest
@@ -10119,7 +10316,7 @@ svcTerminateProcess
 
 ; Result __stdcall svcOpenProcess(Handle *process, u32 processId)
 svcOpenProcess				; CODE XREF: sub_100CA8+20p
-					; ROM:00101400p ...
+					; sub_1013F4+Cp ...
 
 var_4		= -4
 
@@ -10518,7 +10715,7 @@ off_107048	DCD dword_108618	; DATA XREF: sub_107020+10r
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_10704C				; CODE XREF: ROM:00101410p
+sub_10704C				; CODE XREF: sub_1013F4+1Cp
 					; sub_10204C+48p ...
 		STMFD	SP!, {R4,LR}
 		MOV	R3, #2
@@ -10539,8 +10736,8 @@ off_107078	DCD dword_108618	; DATA XREF: sub_10704C+10r
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_10707C				; CODE XREF: ROM:0010142Cp
-					; ROM:00101444p ...
+sub_10707C				; CODE XREF: sub_1013F4+38p
+					; sub_1013F4+50p ...
 		LDR	R3, =dword_10B49C
 		MOV	R12, #1
 		STMIB	R3, {R0-R2}
@@ -10677,7 +10874,7 @@ loc_107168				; CODE XREF: sub_107160+1Cj
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_107188				; CODE XREF: ROM:00104900p
+sub_107188				; CODE XREF: sub_1047F0+110p
 					; sub_10736C+50p ...
 		STMFD	SP!, {R4-R6,LR}
 		LDR	R5, =dword_108634
@@ -10836,8 +11033,8 @@ off_107368	DCD dword_10B52C	; DATA XREF: sub_107300+1Cr
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_10736C				; CODE XREF: ROM:00105890p
-					; ROM:001058B4p
+sub_10736C				; CODE XREF: sub_105864+2Cp
+					; sub_105864+50p
 					; DATA XREF: ...
 		CMP	R0, #1
 		STMFD	SP!, {R3,LR}
@@ -11056,7 +11253,7 @@ s		DCD aHttp44670_orgN	; DATA XREF: showMenu+6Cr
 
 
 sub_107574				; CODE XREF: sub_100F64:loc_101094p
-					; ROM:0010117Cp ...
+					; sub_10111C+60p ...
 
 g		= -0x18
 b		= -0x14
@@ -11100,7 +11297,7 @@ loc_1075B4				; CODE XREF: sub_107574+9Cj
 		STR	R3, [SP,#0x18+b] ; b
 		STR	R4, [SP,#0x18+g] ; g
 		MOV	R3, #0		; r
-		LDR	R0, =dword_10AC7C ; s
+		LDR	R0, =aPressBToClose_ ; s
 		BL	print
 		BL	sub_107188
 		BL	waitKey
@@ -11121,7 +11318,8 @@ off_107624	DCD off_10AD08		; DATA XREF: sub_107574r
 dword_107628	DCD 0x3B9ACA00		; DATA XREF: sub_107574+18r
 off_10762C	DCD dword_10B51C	; DATA XREF: sub_107574:loc_10759Cr
 ; unsigned __int8 *off_107630
-off_107630	DCD dword_10AC7C	; DATA XREF: sub_107574+88r
+off_107630	DCD aPressBToClose_	; DATA XREF: sub_107574+88r
+					; "Press [B] to close."
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -11193,7 +11391,7 @@ dword_1076DC	DCD 0x1869F		; DATA XREF: sub_107670+4r
 
 
 sub_1076E0				; CODE XREF: sub_1076E0+10j
-					; ROM:00107770p ...
+					; sub_107748+28p ...
 		MOV	R3, R0
 		ADD	R0, R0,	#1
 		LDRB	R2, [R3]
@@ -11214,7 +11412,7 @@ loc_1076F8				; CODE XREF: sub_1076E0+24j
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_107710				; CODE XREF: ROM:00107788p
+sub_107710				; CODE XREF: sub_107748+40p
 
 var_4		= -4
 
@@ -11236,68 +11434,86 @@ loc_10771C				; CODE XREF: sub_107710+28j
 		LDR	PC, [SP+4+var_4],#4
 ; End of function sub_107710
 
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_107748
+
+var_120		= -0x120
+openflags	= -0x114
+attributes	= -0x110
+out		= -0x104
+var_100		= -0x100
+var_FC		= -0xFC
+var_F8		= -0xF8
+var_F4		= -0xF4
+var_18		= -0x18
+
 		STMFD	SP!, {R4-R7,LR}
-		SUB	SP, SP,	#0x11C
-		ADD	R4, SP,	#0x118
+		SUB	SP, SP,	#0x11C	; archive
+		ADD	R4, SP,	#0x130+var_18
 		MOV	R5, #0
 		STRB	R5, [R4,#-0xC8]!
 		MOV	R7, R0
 		MOV	R6, R1
 		MOV	R0, R4
-		LDR	R1, =unk_10AC90
-		STR	R5, [SP,#0x2C]
+		LDR	R1, =aDbg	; "/dbg"
+		STR	R5, [SP,#0x130+out]
 		BL	sub_1076E0
 		MOV	R0, R4
 		MOV	R1, R7
 		BL	sub_1076E0
 		MOV	R0, R6
-		ADD	R1, SP,	#0x3C
+		ADD	R1, SP,	#0x130+var_F4
 		BL	sub_107710
-		ADD	R1, SP,	#0x3C
+		ADD	R1, SP,	#0x130+var_F4
 		MOV	R0, R4
 		BL	sub_1076E0
 		MOV	R3, #3
 		MOV	R0, R4
-		STRB	R3, [SP,#0x30]
+		STRB	R3, [SP,#0x130+var_100]
 		BL	strlen
-		ADD	R2, SP,	#0x30
-		STR	R4, [SP,#0x38]
-		ADD	R3, SP,	#0x10
+		ADD	R2, SP,	#0x130+var_100
+		STR	R4, [SP,#0x130+var_F8]
+		ADD	R3, SP,	#0x130+var_120
 		LDR	R12, =sdmcArchive
 		ADD	R0, R0,	#1
-		STR	R0, [SP,#0x34]
+		STR	R0, [SP,#0x130+var_FC]
 		LDMIA	R2, {R0-R2}
 		STMIA	R3, {R0-R2}
 		MOV	R3, #7
-		STR	R3, [SP,#0x1C]
+		STR	R3, [SP,#0x130+openflags] ; openflags
 		ADD	R3, R12, #8
-		STR	R5, [SP,#0x20]
+		STR	R5, [SP,#0x130+attributes] ; attributes
 		LDMIA	R3, {R0-R3}
 		STMEA	SP, {R0-R3}
 		LDR	R1, =fsUserHandle
 		LDMIA	R12, {R2,R3}
-		LDR	R0, [R1]
-		ADD	R1, SP,	#0x2C
+		LDR	R0, [R1]	; handle
+		ADD	R1, SP,	#0x130+out ; out
 		BL	FSUSER_OpenFileDirectly
-		LDR	R0, [SP,#0x2C]
+		LDR	R0, [SP,#0x130+out] ; handle
 		CMP	R0, R5
 		BEQ	loc_107804
 		BL	FSFILE_Close
 
-loc_107804				; CODE XREF: ROM:001077FCj
+loc_107804				; CODE XREF: sub_107748+B4j
 		ADD	SP, SP,	#0x11C
 		LDMFD	SP!, {R4-R7,PC}
+; End of function sub_107748
+
 ; ---------------------------------------------------------------------------
-off_10780C	DCD unk_10AC90		; DATA XREF: ROM:00107768r
-off_107810	DCD sdmcArchive		; DATA XREF: ROM:001077B4r
-off_107814	DCD fsUserHandle	; DATA XREF: ROM:001077E0r
+off_10780C	DCD aDbg		; DATA XREF: sub_107748+20r
+					; "/dbg"
+off_107810	DCD sdmcArchive		; DATA XREF: sub_107748+6Cr
+off_107814	DCD fsUserHandle	; DATA XREF: sub_107748+98r
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
 sub_107818				; CODE XREF: sub_107854+14p
-					; ROM:00107898p ...
+					; sub_107874+24p ...
 		LDR	R2, =dword_10B554
 		MOV	R1, R0
 		LDR	R3, [R2]
@@ -11336,7 +11552,11 @@ locret_107870				; CODE XREF: sub_107854+10j
 		LDMFD	SP!, {R4,PC}
 ; End of function sub_107854
 
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_107874
 		LDR	R3, =off_10B55C
 		STMFD	SP!, {R4-R6,LR}
 		SUB	R5, R1,	#1
@@ -11344,7 +11564,7 @@ locret_107870				; CODE XREF: sub_107854+10j
 		LDR	R6, [R3]
 		STR	R0, [R3]
 
-loc_10788C				; CODE XREF: ROM:0010789Cj
+loc_10788C				; CODE XREF: sub_107874+28j
 		LDRB	R0, [R5,#1]!
 		CMP	R0, #0
 		BEQ	loc_1078A0
@@ -11352,11 +11572,13 @@ loc_10788C				; CODE XREF: ROM:0010789Cj
 		B	loc_10788C
 ; ---------------------------------------------------------------------------
 
-loc_1078A0				; CODE XREF: ROM:00107894j
+loc_1078A0				; CODE XREF: sub_107874+20j
 		STR	R6, [R4]
 		LDMFD	SP!, {R4-R6,PC}
+; End of function sub_107874
+
 ; ---------------------------------------------------------------------------
-off_1078A8	DCD off_10B55C		; DATA XREF: ROM:00107874r
+off_1078A8	DCD off_10B55C		; DATA XREF: sub_107874r
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -11618,8 +11840,8 @@ loc_107B60				; CODE XREF: sub_1078AC+18j
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_107B68				; CODE XREF: ROM:00107C24p
-					; ROM:00107C58p ...
+sub_107B68				; CODE XREF: sub_107C10+14p
+					; sub_107C10+48p ...
 
 var_1C		= -0x1C
 var_14		= -0x14
@@ -11672,28 +11894,44 @@ varg_r3		= -4
 
 ; ---------------------------------------------------------------------------
 off_107BD0	DCD dword_10B554	; DATA XREF: sub_107B90+Cr
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_107BD4
+
+var_1C		= -0x1C
+varg_r1		= -0xC
+varg_r2		= -8
+varg_r3		= -4
+
 		STMFD	SP!, {R1-R3}
 		STMFD	SP!, {R0,R1,R4,R5,LR}
-		ADD	R1, SP,	#0x18
+		ADD	R1, SP,	#0x20+varg_r2
 		LDR	R4, =off_10B55C
-		STR	R1, [SP,#4]
+		STR	R1, [SP,#0x20+var_1C]
 		LDR	R5, [R4]
 		STR	R0, [R4]
-		LDR	R0, [SP,#0x14]
+		LDR	R0, [SP,#0x20+varg_r1]
 		BL	sub_1078AC
 		STR	R5, [R4]
 		ADD	SP, SP,	#8
 		LDMFD	SP!, {R4,R5,LR}
 		ADD	SP, SP,	#0xC
 		BX	LR
+; End of function sub_107BD4
+
 ; ---------------------------------------------------------------------------
-off_107C0C	DCD off_10B55C		; DATA XREF: ROM:00107BE0r
-; ---------------------------------------------------------------------------
+off_107C0C	DCD off_10B55C		; DATA XREF: sub_107BD4+Cr
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_107C10
 		STMFD	SP!, {R4-R6,LR}
 		MOV	R6, R3
 		MOV	R5, R0
-		LDR	R0, =(dword_10AC94+1)
+		LDR	R0, =a08lx	; "%08lX "
 		MOV	R4, R2
 		BL	sub_107B68
 		CMP	R6, #2
@@ -11704,22 +11942,22 @@ off_107C0C	DCD off_10B55C		; DATA XREF: ROM:00107BE0r
 		MOVEQ	R6, R5
 		BNE	loc_107CC0
 
-loc_107C44				; CODE XREF: ROM:00107C5Cj
+loc_107C44				; CODE XREF: sub_107C10+4Cj
 		RSB	R3, R5,	R6
 		CMP	R3, R4
 		BGE	loc_107C60
-		LDR	R0, =dword_10AC9C
+		LDR	R0, =a02x	; " %02X"
 		LDRB	R1, [R6],#1
 		BL	sub_107B68
 		B	loc_107C44
 ; ---------------------------------------------------------------------------
 
-loc_107C60				; CODE XREF: ROM:00107C4Cj
+loc_107C60				; CODE XREF: sub_107C10+3Cj
 		MOV	R0, #0x20
 		BL	sub_107818
 		MOV	R6, R5
 
-loc_107C6C				; CODE XREF: ROM:00107C90j
+loc_107C6C				; CODE XREF: sub_107C10+80j
 		RSB	R3, R5,	R6
 		CMP	R3, R4
 		BGE	loc_107CC0
@@ -11732,9 +11970,9 @@ loc_107C6C				; CODE XREF: ROM:00107C90j
 		B	loc_107C6C
 ; ---------------------------------------------------------------------------
 
-loc_107C94				; CODE XREF: ROM:00107C2Cj
-					; ROM:00107CA4j
-		LDR	R0, =0x10ACA2
+loc_107C94				; CODE XREF: sub_107C10+1Cj
+					; sub_107C10+94j
+		LDR	R0, =a04x	; " %04X"
 		LDRH	R1, [R5],#2
 		BL	sub_107B68
 		SUBS	R4, R4,	#1
@@ -11742,29 +11980,35 @@ loc_107C94				; CODE XREF: ROM:00107C2Cj
 		B	loc_107CC0
 ; ---------------------------------------------------------------------------
 
-loc_107CAC				; CODE XREF: ROM:00107C34j
-					; ROM:00107CBCj
-		LDR	R0, =dword_10ACA8
+loc_107CAC				; CODE XREF: sub_107C10+24j
+					; sub_107C10+ACj
+		LDR	R0, =a08lx_0	; " %08LX"
 		LDR	R1, [R5],#4
 		BL	sub_107B68
 		SUBS	R4, R4,	#1
 		BNE	loc_107CAC
 
-loc_107CC0				; CODE XREF: ROM:00107C40j
-					; ROM:00107C74j ...
+loc_107CC0				; CODE XREF: sub_107C10+30j
+					; sub_107C10+64j ...
 		MOV	R0, #0xA
 		LDMFD	SP!, {R4-R6,LR}
 		B	sub_107818
+; End of function sub_107C10
+
 ; ---------------------------------------------------------------------------
-off_107CCC	DCD dword_10AC94+1	; DATA XREF: ROM:00107C1Cr
-off_107CD0	DCD dword_10AC9C	; DATA XREF: ROM:00107C50r
-dword_107CD4	DCD 0x10ACA2		; DATA XREF: ROM:loc_107C94r
-off_107CD8	DCD dword_10ACA8	; DATA XREF: ROM:loc_107CACr
+off_107CCC	DCD a08lx		; DATA XREF: sub_107C10+Cr
+					; "%08lX "
+off_107CD0	DCD a02x		; DATA XREF: sub_107C10+40r
+					; " %02X"
+off_107CD4	DCD a04x		; DATA XREF: sub_107C10:loc_107C94r
+					; " %04X"
+off_107CD8	DCD a08lx_0		; DATA XREF: sub_107C10:loc_107CACr
+					; " %08LX"
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_107CDC				; CODE XREF: ROM:00107DA8p
+sub_107CDC				; CODE XREF: sub_107D90+18p
 		LDR	R3, =off_10B558
 		LDR	R2, [R3]
 		CMP	R2, #0
@@ -11828,7 +12072,11 @@ loc_107D84				; CODE XREF: sub_107CDC+Cj
 
 ; ---------------------------------------------------------------------------
 off_107D8C	DCD off_10B558		; DATA XREF: sub_107CDCr
-; ---------------------------------------------------------------------------
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_107D90
 		STMFD	SP!, {R3-R5,LR}
 		LDR	R4, =off_10B558
 		LDR	R5, [R4]
@@ -11838,13 +12086,19 @@ off_107D8C	DCD off_10B558		; DATA XREF: sub_107CDCr
 		BL	sub_107CDC
 		STR	R5, [R4]
 		LDMFD	SP!, {R3-R5,PC}
+; End of function sub_107D90
+
 ; ---------------------------------------------------------------------------
-off_107DB4	DCD off_10B558		; DATA XREF: ROM:00107D94r
-; ---------------------------------------------------------------------------
+off_107DB4	DCD off_10B558		; DATA XREF: sub_107D90+4r
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_107DB8
 		MOV	R3, #0
 		STR	R3, [R1]
 
-loc_107DC0				; CODE XREF: ROM:00107DD4j
+loc_107DC0				; CODE XREF: sub_107DB8+1Cj
 		LDR	R2, [R0]
 		LDRB	R3, [R2]
 		CMP	R3, #0x20
@@ -11875,7 +12129,7 @@ loc_107DC0				; CODE XREF: ROM:00107DD4j
 		B	loc_107E74
 ; ---------------------------------------------------------------------------
 
-loc_107E30				; CODE XREF: ROM:00107E10j
+loc_107E30				; CODE XREF: sub_107DB8+58j
 		ADD	R3, R2,	#2
 		STR	R3, [R0]
 		MOV	LR, #2
@@ -11883,7 +12137,7 @@ loc_107E30				; CODE XREF: ROM:00107E10j
 		B	loc_107E74
 ; ---------------------------------------------------------------------------
 
-loc_107E44				; CODE XREF: ROM:00107E18j
+loc_107E44				; CODE XREF: sub_107DB8+60j
 		CMP	R3, #0x20
 		BLS	loc_107ED8
 		SUB	R2, R3,	#0x30
@@ -11891,23 +12145,23 @@ loc_107E44				; CODE XREF: ROM:00107E18j
 		MOVLS	LR, #8
 		BLS	loc_107E74
 
-loc_107E5C				; CODE XREF: ROM:00107E70j
-					; ROM:00107EA8j ...
+loc_107E5C				; CODE XREF: sub_107DB8+B8j
+					; sub_107DB8+F0j ...
 		MOV	R0, #0
 		LDMFD	SP!, {R4,PC}
 ; ---------------------------------------------------------------------------
 
-loc_107E64				; CODE XREF: ROM:00107DF8j
+loc_107E64				; CODE XREF: sub_107DB8+40j
 		SUB	R2, R3,	#0x30
 		CMP	R2, #9
 		MOVLS	LR, #0xA
 		BHI	loc_107E5C
 
-loc_107E74				; CODE XREF: ROM:00107E2Cj
-					; ROM:00107E40j ...
+loc_107E74				; CODE XREF: sub_107DB8+74j
+					; sub_107DB8+88j ...
 		MOV	R12, #0
 
-loc_107E78				; CODE XREF: ROM:00107EC8j
+loc_107E78				; CODE XREF: sub_107DB8+110j
 		CMP	R3, #0x20
 		BLS	loc_107ECC
 		CMP	R3, #0x60
@@ -11922,7 +12176,7 @@ loc_107E78				; CODE XREF: ROM:00107EC8j
 		CMP	R2, #9
 		BLS	loc_107E5C
 
-loc_107EAC				; CODE XREF: ROM:00107E98j
+loc_107EAC				; CODE XREF: sub_107DB8+E0j
 		CMP	R2, LR
 		BCS	loc_107E5C
 		LDR	R3, [R0]
@@ -11933,14 +12187,16 @@ loc_107EAC				; CODE XREF: ROM:00107E98j
 		B	loc_107E78
 ; ---------------------------------------------------------------------------
 
-loc_107ECC				; CODE XREF: ROM:00107E7Cj
+loc_107ECC				; CODE XREF: sub_107DB8+C4j
 		CMP	R4, #0
 		RSBNE	R12, R12, #0
 		STR	R12, [R1]
 
-loc_107ED8				; CODE XREF: ROM:00107E48j
+loc_107ED8				; CODE XREF: sub_107DB8+90j
 		MOV	R0, #1
 		LDMFD	SP!, {R4,PC}
+; End of function sub_107DB8
+
 ; [000000F0 BYTES: COLLAPSED FUNCTION memcpy. PRESS KEYPAD CTRL-"+" TO EXPAND]
 ; [000000F4 BYTES: COLLAPSED FUNCTION memset. PRESS KEYPAD CTRL-"+" TO EXPAND]
 
@@ -12006,9 +12262,9 @@ dword_1085D8	DCD 0xFFFC4000		; DATA XREF: sub_100E98+1Cr
 dword_1085DC	DCD 0xC00		; DATA XREF: sub_101278+E8r
 					; sub_103554:loc_1035ACo ...
 		DCD 2
-dword_1085E4	DCD 0xFFFBC000		; DATA XREF: ROM:001034ACo
+dword_1085E4	DCD 0xFFFBC000		; DATA XREF: sub_103488+24o
 					; ROM:off_1034CCo ...
-dword_1085E8	DCD 0xFFFC2000		; DATA XREF: ROM:0010349Co
+dword_1085E8	DCD 0xFFFC2000		; DATA XREF: sub_103488+14o
 					; ROM:off_1034C8o ...
 		DCD 1, 1
 dword_1085F4	DCD 0x6200000		; DATA XREF: sub_1033D0+2Co
@@ -12047,8 +12303,8 @@ dword_108638	DCD 4, 0x1095B4, 5, 0x109590, 6, 0x109530, 0xA,	0x21, 0xB
 		DCD 0
 		DCD dword_108638
 		DCD 0, 0
-off_1086C4	DCD off_1001B4		; DATA XREF: nsDbgPrint_2+20o
-					; nsDbgPrint_2:loc_10014Co ...
+off_1086C4	DCD off_1001B4		; DATA XREF: ntrEntry+18o
+					; ntrEntry:loc_10014Co	...
 		DCD 0x17, 0x1001B8, 0x17, 0x1001BC, 0x17, 0x1002D8, 0x17
 		DCD 0x100374, 0x17, 0x100480, 0x17, 0x100658, 0x17, 0x100680
 		DCD 0x17, 0x100684, 0x17, 0x100C08, 0x17, 0x100C10, 0x17
@@ -12181,8 +12437,8 @@ off_1086C4	DCD off_1001B4		; DATA XREF: nsDbgPrint_2+20o
 		DCD 0x107CCC, 0x17, 0x107CD0, 0x17, 0x107CD4, 0x17, 0x107CD8
 		DCD 0x17, 0x107D8C, 0x17, 0x107DB4, 0x17, 0x10860C, 0x17
 		DCD 0x108620, 0x17, 0x109E0C, 0x17, 0x109E10, 0x17
-aUsrLibLd_so_1	DCB "/usr/lib/ld.so.1",0 ; DATA XREF: nsDbgPrint_2+24o
-					; nsDbgPrint_2+5Co ...
+aUsrLibLd_so_1	DCB "/usr/lib/ld.so.1",0 ; DATA XREF: ntrEntry+1Co
+					; ntrEntry+54o	...
 		DCB 0, 0, 0
 		DCD 0, 0, 0, 0,	0
 		DCD ntrBase
@@ -12296,7 +12552,7 @@ aNoFileFound_	DCB "no file found.",0
 aSS		DCB "%s%s",0            ; DATA XREF: sub_100F64+160o
 					; ROM:off_101118o
 aOpenarchiveFai	DCB "openArchive failed, ret=%08x",0
-asc_109EDC	DCB "/",0               ; DATA XREF: ROM:loc_101184o
+asc_109EDC	DCB "/",0               ; DATA XREF: sub_10111C:loc_101184o
 					; ROM:off_1011C4o
 aDebug_flag	DCB "/debug.flag",0     ; DATA XREF: sub_101278+B0o
 					; ROM:off_1013E0o
@@ -12431,7 +12687,7 @@ aDebuggerHasAlr	DCB "Debugger has already been enabled.",0 ; DATA XREF: sub_1035
 					; ROM:off_103758o
 aExpandPoolAddr	DCB "expand pool addr: %08x, size: %08x",0xA,0
 aAllocPlgMemory	DCB "alloc plg memory failed: %08x",0xA,0
-aFsReg		DCB "fs:REG",0          ; DATA XREF: ROM:0010388Co
+aFsReg		DCB "fs:REG",0          ; DATA XREF: sub_103860+2Co
 					; ROM:off_1038C8o
 aFsuser_initial	DCB "FSUSER_Initialize failed: %08x",0xA,0
 aFsuserhandle08	DCB "fsUserHandle: %08x",0xA,0
@@ -12489,7 +12745,7 @@ aReadremoteme_0	DCB "readRemoteMemory failed: %08x",0
 aHfile08x	DCB "hfile: %08x",0
 aDebugactivepro	DCB "debugActiveProcess failed: %08x",0
 aHdebug08x	DCB "hdebug: %08x",0
-aReadmemoryAddr	DCB "readmemory addr = %08x, ret = %08x",0 ; DATA XREF: ROM:00104920o
+aReadmemoryAddr	DCB "readmemory addr = %08x, ret = %08x",0 ; DATA XREF: sub_1047F0+130o
 					; ROM:off_1049A4o
 aDumpcode	DCB "dumpcode",0
 aTestpath	DCB "testpath",0        ; DATA XREF: sub_1049A8+4Co
@@ -12528,14 +12784,13 @@ loc_10AB52				; DATA XREF: sub_109DE0+14o
 		LDRB	R0, [R7]
 		MOVS	R2, R1
 		STRH	R6, [R0,R5]
-		LDR	R1, =0x2E6573
+		LDR	R1, aPressBToClose_+0x10
 		CMP	R4, R9
 		BX	R11
 ; End of function sub_10AB50
 
 ; ---------------------------------------------------------------------------
-		DCB 0x65 ; e
-aTsizeFailed08x	DCB "tSize failed: %08x",0xA,0
+aEtsizeFailed08x DCB "etSize failed: %08x",0xA,0
 aRtloadfileto_0	DCB "rtLoadFileToBuffer: buffer too small",0xA,0
 aFsfile_readF_0	DCB "FSFILE_Read failed: %08x",0xA,0
 aOpenthreadFail	DCB "openThread failed: %08x",0xA,0
@@ -12553,32 +12808,30 @@ aSrv		DCB "srv:",0            ; DATA XREF: initSrv+8o ROM:portNameo
 		DCB " * ",0
 		DCB "   ",0
 aHttp44670_orgN	DCB "http://44670.org/ntr",0 ; DATA XREF: showMenu+6Co ROM:so
-dword_10AC7C	DCD 0x73657250,	0x425B2073, 0x6F74205D,	0x6F6C6320
-					; DATA XREF: sub_107574+88o
+aPressBToClose_	DCB "Press [B] to close.",0 ; DATA XREF: sub_107574+88o
 					; ROM:off_107630o
-dword_10AC8C	DCD 0x2E6573		; DATA XREF: sub_10AB50+20r
-unk_10AC90	DCB 0x2F ; /		; DATA XREF: ROM:00107768o
+aDbg		DCB "/dbg",0            ; DATA XREF: sub_107748+20o
 					; ROM:off_10780Co
-		DCB 0x64, 0x62,	0x67
-dword_10AC94	DCD 0x38302500,	0x20586C ; DATA	XREF: ROM:00107C1Co
+a08lx		DCB "%08lX ",0          ; DATA XREF: sub_107C10+Co
 					; ROM:off_107CCCo
-dword_10AC9C	DCD 0x32302520,	0x25200058, 0x583430 ; DATA XREF: ROM:00107C50o
+a02x		DCB " %02X",0           ; DATA XREF: sub_107C10+40o
 					; ROM:off_107CD0o
-dword_10ACA8	DCD 0x38302520,	0x584C,	0x10, 0	; DATA XREF: ROM:loc_107CACo
+a04x		DCB " %04X",0           ; DATA XREF: sub_107C10:loc_107C94o
+					; ROM:off_107CD4o
+a08lx_0		DCB " %08LX",0          ; DATA XREF: sub_107C10:loc_107CACo
 					; ROM:off_107CD8o
-		DCB    1
-		DCB 0x7A, 0x52,	0
-		DCD 0x10E7C02, 0xD0C1B,	0x2C, 0x18, 0xFFFFD47C,	0x224
-		DCD 0x40E6200, 0xC4660184
+		DCB 0
+		DCD 0x10, 0, 0x527A01, 0x10E7C02, 0xD0C1B, 0x2C, 0x18
+		DCD 0xFFFFD47C,	0x224, 0x40E6200
+		DCD 0xC4660184
 		DCD 0xE56000E
-		DCB    8
-		DCB 0x84, 2, 0x85
+		DCD 0x85028408
 		DCD 0xA9C0201, 0xEC5C442, 0x520B4200, 0xEC5C4
 IoBasePad	DCD 0			; DATA XREF: c_entryo c_entry+Cr ...
 dword_10ACF8	DCD 0			; DATA XREF: sub_100CA8+14w
 					; sub_100CA8+54w ...
 fsUserHandle	DCD 0			; DATA XREF: sub_100F64+80r
-					; ROM:00101154r ...
+					; sub_10111C+38r ...
 dword_10AD00	DCD 0			; DATA XREF: sub_103554:loc_1035CCo
 					; ROM:off_1035F4o
 dword_10AD04	DCD 0			; DATA XREF: main+18w
@@ -12601,28 +12854,10 @@ dword_10ADEC	DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
 					; sub_101278+18o ...
 		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
 		DCD 0
-; ---------------------------------------------------------------------------
 		CODE32
-
-loc_10AE78				; CODE XREF: sub_100BB4+14p
+dword_10AE78	DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0
+					; CODE XREF: sub_100BB4+14p
 					; DATA XREF: sub_100BB4+Co ...
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-; ---------------------------------------------------------------------------
 dword_10AEB8	DCD 0			; DATA XREF: sub_100CA8+70o
 					; sub_100CA8+78w ...
 dword_10AEBC	DCD 0			; DATA XREF: sub_100CA8:loc_100E0Co
@@ -12651,254 +12886,26 @@ dword_10AEF4	DCD 0			; DATA XREF: ROM:00103BB8w
 		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
 		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
 		DCD 0
-; ---------------------------------------------------------------------------
-
-loc_10AF84				; CODE XREF: ROM:00103BE4j
+dword_10AF84	DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0
+					; CODE XREF: ROM:00103BE4j
 					; DATA XREF: ROM:00103BDCo ...
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-
-loc_10AFC4				; DATA XREF: sub_1035F8+10o
+dword_10AFC4	DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+					; DATA XREF: sub_1035F8+10o
 					; sub_1035F8+114o ...
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-; ---------------------------------------------------------------------------
-dword_10B2C4	DCD 0			; DATA XREF: sub_103D34+10o
-					; sub_103D34+14r ...
-dword_10B2C8	DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
-					; DATA XREF: sub_103BF4+8o
-					; ROM:off_103C20o
 		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
-		DCD 0
-; ---------------------------------------------------------------------------
-; START	OF FUNCTION CHUNK FOR sub_103B68
-
-loc_10B354				; CODE XREF: sub_103B68+20j
-					; DATA XREF: sub_103B68+18o ...
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-; END OF FUNCTION CHUNK	FOR sub_103B68
-; ---------------------------------------------------------------------------
-dword_10B394	DCD 0			; DATA XREF: sub_103C28+30o
-					; sub_103C28+58o ...
+		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
+		DCD 0, 0, 0, 0,	0, 0, 0
 byte_10B398	DCB 0			; DATA XREF: sub_104044+30w
 		DCB 0, 0, 0
 dword_10B39C	DCD 0			; DATA XREF: sub_103C28+4Co
@@ -12913,27 +12920,9 @@ dword_10B3B4	DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
 					; sub_104044+140o ...
 		DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0
 		DCD 0
-; ---------------------------------------------------------------------------
-
-loc_10B440				; CODE XREF: sub_103E94+74p
+dword_10B440	DCD 0, 0, 0, 0,	0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0
+					; CODE XREF: sub_103E94+74p
 					; DATA XREF: sub_103E94+70o ...
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-		ANDEQ	R0, R0,	R0
-; ---------------------------------------------------------------------------
 dword_10B480	DCD 0			; DATA XREF: getCurrentProcessId+4o
 					; getCurrentProcessId+14r ...
 dword_10B484	DCD 0			; DATA XREF: getCurrentProcessHandle+10r
